@@ -6,8 +6,8 @@ Description: Implements a JSON feed following the version 1 spec by means of a R
 Version:     1.0.0
 Author:      Felix Arntz
 Author URI:  https://leaves-and-love.net
-License:     undefined
-License URI: undefined
+License:     GNU General Public License v3
+License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Text Domain: wp-api-json-feed
 Tags:        json feed, feed, rest api
 */

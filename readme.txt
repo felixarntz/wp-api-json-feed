@@ -10,8 +10,8 @@ Requires at least: 4.7
 Tested up to:      4.8
 Stable tag:        1.0.0
 Version:           1.0.0
-License:           undefined
-License URI:       undefined
+License:           GNU General Public License v3
+License URI:       http://www.gnu.org/licenses/gpl-3.0.html
 Tags:              json feed, feed, rest api
 
 Implements a JSON feed following the version 1 spec by means of a REST API endpoint.
