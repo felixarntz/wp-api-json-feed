@@ -287,7 +287,7 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 
 		$data = array();
 
-		foreach ( $schema['properties'] as $property => $property_schema ) {
+		foreach ( array_keys( $schema['properties'] ) as $property ) {
 			if ( 'items' === $property ) {
 				$data['items'] = array();
 				continue;
@@ -407,22 +407,7 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 				'author'        => array(
 					'description' => __( 'The feed author.', 'wp-api-json-feed' ),
 					'type'        => 'object',
-					'properties'  => array(
-						'name'   => array(
-							'description' => __( 'Name of the author.', 'wp-api-json-feed' ),
-							'type'        => 'string',
-						),
-						'url'    => array(
-							'description' => __( 'Website URL of a site the author owns.', 'wp-api-json-feed' ),
-							'type'        => 'string',
-							'format'      => 'uri',
-						),
-						'avatar' => array(
-							'description' => __( 'URL of the image avatar of the author.', 'wp-api-json-feed' ),
-							'type'        => 'string',
-							'format'      => 'uri',
-						),
-					),
+					'properties'  => $this->get_author_schema_properties(),
 				),
 				'expired'       => array(
 					'description' => __( 'Whether or not the feed is finished.', 'wp-api-json-feed' ),
@@ -433,17 +418,7 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 					'type'        => 'array',
 					'items'       => array(
 						'type'       => 'object',
-						'properties' => array(
-							'type' => array(
-								'description' => __( 'Endpoint type.', 'wp-api-json-feed' ),
-								'type'        => 'string',
-							),
-							'url'  => array(
-								'description' => __( 'Endpoint URL.', 'wp-api-json-feed' ),
-								'type'        => 'string',
-								'format'      => 'uri',
-							),
-						),
+						'properties' => $this->get_hub_schema_properties(),
 					),
 				),
 				'items'         => array(
@@ -451,114 +426,7 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 					'type'        => 'array',
 					'items'       => array(
 						'type'       => 'object',
-						'properties' => array(
-							'id'           => array(
-								'description' => __( 'Unique identifier for that item for that feed over time. ', 'wp-api-json-feed' ),
-								'type'        => 'string',
-							),
-							'url'          => array(
-								'description' => __( 'URL of the resource described by the item.', 'wp-api-json-feed' ),
-								'type'        => 'string',
-								'format'      => 'uri',
-							),
-							'external_url' => array(
-								'description' => __( 'URL of a referenced page elsewhere.', 'wp-api-json-feed' ),
-								'type'        => 'string',
-								'format'      => 'uri',
-							),
-							'title'        => array(
-								'description' => __( 'Plain text title of the item.', 'wp-api-json-feed' ),
-								'type'        => 'string',
-							),
-							'content_html' => array(
-								'description' => __( 'HTML content of the item.', 'wp-api-json-feed' ),
-								'type'        => 'string',
-							),
-							'content_text' => array(
-								'description' => __( 'Plain text content of the item.', 'wp-api-json-feed' ),
-								'type'        => 'string',
-							),
-							'summary'      => array(
-								'description' => __( 'A plain text sentence or two describing the item.', 'wp-api-json-feed' ),
-								'type'        => 'string',
-							),
-							'image'        => array(
-								'description' => __( 'URL of the main image for the item.', 'wp-api-json-feed' ),
-								'type'        => 'string',
-								'format'      => 'uri',
-							),
-							'banner_image'  => array(
-								'description' => __( 'URL of an image to use as a banner.', 'wp-api-json-feed' ),
-								'type'        => 'string',
-								'format'      => 'uri',
-							),
-							'date_published' => array(
-								'description' => __( 'The date in RFC 3339 format.', 'wp-api-json-feed' ),
-								'type'        => 'string',
-								'format'      => 'date-time',
-							),
-							'date_modified'  => array(
-								'description' => __( 'The modification date in RFC 3339 format.', 'wp-api-json-feed' ),
-								'type'        => 'string',
-								'format'      => 'date-time',
-							),
-							'author'        => array(
-								'description' => __( 'Author of the item.', 'wp-api-json-feed' ),
-								'type'        => 'object',
-								'properties'  => array(
-									'name'   => array(
-										'description' => __( 'Name of the author.', 'wp-api-json-feed' ),
-										'type'        => 'string',
-									),
-									'url'    => array(
-										'description' => __( 'Website URL of a site the author owns.', 'wp-api-json-feed' ),
-										'type'        => 'string',
-										'format'      => 'uri',
-									),
-									'avatar' => array(
-										'description' => __( 'URL of the image avatar of the author.', 'wp-api-json-feed' ),
-										'type'        => 'string',
-										'format'      => 'uri',
-									),
-								),
-							),
-							'tags'           => array(
-								'description' => __( 'Plain text values the item is tagged with.', 'wp-api-json-feed' ),
-								'type'        => 'array',
-								'items'       => array(
-									'type' => 'string',
-								),
-							),
-							'attachments'    => array(
-								'description' => __( 'Related resources for the item.', 'wp-api-json-feed' ),
-								'type'        => 'array',
-								'items'       => array(
-									'type'       => 'object',
-									'properties' => array(
-										'url'                 => array(
-											'description' => __( 'The location of the attachment.', 'wp-api-json-feed' ),
-											'type'        => 'string',
-										),
-										'mime_type'           => array(
-											'description' => __( 'The MIME type of the attachment.', 'wp-api-json-feed' ),
-											'type'        => 'string',
-										),
-										'title'               => array(
-											'description' => __( 'Name for the attachment. ', 'wp-api-json-feed' ),
-											'type'        => 'string',
-										),
-										'size_in_bytes'       => array(
-											'description' => __( 'Size of how large the file is.', 'wp-api-json-feed' ),
-											'type'        => 'integer',
-										),
-										'duration_in_seconds' => array(
-											'description' => __( 'Duration of how long the attachment takes to listen to or watch.', 'wp-api-json-feed' ),
-											'type'        => 'integer',
-										),
-									),
-								),
-							),
-						),
+						'properties' => $this->get_item_schema_properties(),
 					),
 				),
 			),
@@ -586,6 +454,171 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 		$schema = apply_filters( 'wp_api_json_feed_schema', $schema, $this->post_type->name );
 
 		return $schema;
+	}
+
+	/**
+	 * Retrieves the properties for a feed hub's schema, conforming to JSON Schema.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 *
+	 * @return array Hub schema property data.
+	 */
+	protected function get_hub_schema_properties() {
+		return array(
+			'type' => array(
+				'description' => __( 'Endpoint type.', 'wp-api-json-feed' ),
+				'type'        => 'string',
+			),
+			'url'  => array(
+				'description' => __( 'Endpoint URL.', 'wp-api-json-feed' ),
+				'type'        => 'string',
+				'format'      => 'uri',
+			),
+		);
+	}
+
+	/**
+	 * Retrieves the properties for a feed item's schema, conforming to JSON Schema.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 *
+	 * @return array Item schema property data.
+	 */
+	protected function get_item_schema_properties() {
+		return array(
+			'id'           => array(
+				'description' => __( 'Unique identifier for that item for that feed over time. ', 'wp-api-json-feed' ),
+				'type'        => 'string',
+			),
+			'url'          => array(
+				'description' => __( 'URL of the resource described by the item.', 'wp-api-json-feed' ),
+				'type'        => 'string',
+				'format'      => 'uri',
+			),
+			'external_url' => array(
+				'description' => __( 'URL of a referenced page elsewhere.', 'wp-api-json-feed' ),
+				'type'        => 'string',
+				'format'      => 'uri',
+			),
+			'title'        => array(
+				'description' => __( 'Plain text title of the item.', 'wp-api-json-feed' ),
+				'type'        => 'string',
+			),
+			'content_html' => array(
+				'description' => __( 'HTML content of the item.', 'wp-api-json-feed' ),
+				'type'        => 'string',
+			),
+			'content_text' => array(
+				'description' => __( 'Plain text content of the item.', 'wp-api-json-feed' ),
+				'type'        => 'string',
+			),
+			'summary'      => array(
+				'description' => __( 'A plain text sentence or two describing the item.', 'wp-api-json-feed' ),
+				'type'        => 'string',
+			),
+			'image'        => array(
+				'description' => __( 'URL of the main image for the item.', 'wp-api-json-feed' ),
+				'type'        => 'string',
+				'format'      => 'uri',
+			),
+			'banner_image'  => array(
+				'description' => __( 'URL of an image to use as a banner.', 'wp-api-json-feed' ),
+				'type'        => 'string',
+				'format'      => 'uri',
+			),
+			'date_published' => array(
+				'description' => __( 'The date in RFC 3339 format.', 'wp-api-json-feed' ),
+				'type'        => 'string',
+				'format'      => 'date-time',
+			),
+			'date_modified'  => array(
+				'description' => __( 'The modification date in RFC 3339 format.', 'wp-api-json-feed' ),
+				'type'        => 'string',
+				'format'      => 'date-time',
+			),
+			'author'        => array(
+				'description' => __( 'Author of the item.', 'wp-api-json-feed' ),
+				'type'        => 'object',
+				'properties'  => $this->get_author_schema_properties(),
+			),
+			'tags'           => array(
+				'description' => __( 'Plain text values the item is tagged with.', 'wp-api-json-feed' ),
+				'type'        => 'array',
+				'items'       => array(
+					'type' => 'string',
+				),
+			),
+			'attachments'    => array(
+				'description' => __( 'Related resources for the item.', 'wp-api-json-feed' ),
+				'type'        => 'array',
+				'items'       => array(
+					'type'       => 'object',
+					'properties' => $this->get_attachment_schema_properties(),
+				),
+			),
+		);
+	}
+
+	/**
+	 * Retrieves the properties for a feed item attachment's schema, conforming to JSON Schema.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 *
+	 * @return array Item attachment schema property data.
+	 */
+	protected function get_attachment_schema_properties() {
+		return array(
+			'url'                 => array(
+				'description' => __( 'The location of the attachment.', 'wp-api-json-feed' ),
+				'type'        => 'string',
+			),
+			'mime_type'           => array(
+				'description' => __( 'The MIME type of the attachment.', 'wp-api-json-feed' ),
+				'type'        => 'string',
+			),
+			'title'               => array(
+				'description' => __( 'Name for the attachment. ', 'wp-api-json-feed' ),
+				'type'        => 'string',
+			),
+			'size_in_bytes'       => array(
+				'description' => __( 'Size of how large the file is.', 'wp-api-json-feed' ),
+				'type'        => 'integer',
+			),
+			'duration_in_seconds' => array(
+				'description' => __( 'Duration of how long the attachment takes to listen to or watch.', 'wp-api-json-feed' ),
+				'type'        => 'integer',
+			),
+		);
+	}
+
+	/**
+	 * Retrieves the properties for an author's schema, conforming to JSON Schema.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 *
+	 * @return array Author schema property data.
+	 */
+	protected function get_author_schema_properties() {
+		return array(
+			'name'   => array(
+				'description' => __( 'Name of the author.', 'wp-api-json-feed' ),
+				'type'        => 'string',
+			),
+			'url'    => array(
+				'description' => __( 'Website URL of a site the author owns.', 'wp-api-json-feed' ),
+				'type'        => 'string',
+				'format'      => 'uri',
+			),
+			'avatar' => array(
+				'description' => __( 'URL of the image avatar of the author.', 'wp-api-json-feed' ),
+				'type'        => 'string',
+				'format'      => 'uri',
+			),
+		);
 	}
 
 	/**

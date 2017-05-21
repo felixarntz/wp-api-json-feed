@@ -18,6 +18,11 @@ engines:
     enabled: true
     config:
       rulesets: "phpmd.xml"
+    checks:
+      CleanCode/StaticAccess:
+        enabled: false
+      UnusedPrivateMethod:
+        enabled: false
 ratings:
   paths:
   - "**.css"
