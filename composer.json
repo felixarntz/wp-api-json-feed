@@ -1,0 +1,34 @@
+{
+  "name": "felixarntz/wp-api-json-feed",
+  "description": "Implements a JSON feed following the version 1 spec by means of a REST API endpoint.",
+  "version": "1.0.0",
+  "license": "GPL-3.0",
+  "type": "wordpress-plugin",
+  "keywords": [
+    "wordpress",
+    "plugin",
+    "json feed",
+    "feed",
+    "rest api"
+  ],
+  "homepage": "https://wordpress.org/plugins/wp-api-json-feed/",
+  "authors": [
+    {
+      "name": "Felix Arntz",
+      "email": "felix-arntz@leaves-and-love.net",
+      "homepage": "https://leaves-and-love.net",
+      "role": "Developer"
+    }
+  ],
+  "support": {
+    "email": "felix-arntz@leaves-and-love.net",
+    "issues": "https://github.com/felixarntz/wp-api-json-feed/issues"
+  },
+  "require": {
+    "composer/installers": "~1.0"
+  },
+  "require-dev": {
+    "codeclimate/php-test-reporter": "dev-master",
+    "phpunit/phpunit": ">4.8.20 <6.0"
+  }
+}

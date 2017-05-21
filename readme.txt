@@ -1,0 +1,53 @@
+=== WP-API JSON Feed ===
+
+Plugin Name:       WP-API JSON Feed
+Plugin URI:        https://wordpress.org/plugins/wp-api-json-feed/
+Author:            Felix Arntz
+Author URI:        https://leaves-and-love.net
+Contributors:      flixos90
+Donate link:       https://leaves-and-love.net/wordpress-plugins/
+Requires at least: 4.7
+Tested up to:      4.8
+Stable tag:        1.0.0
+Version:           1.0.0
+License:           undefined
+License URI:       undefined
+Tags:              json feed, feed, rest api
+
+Implements a JSON feed following the version 1 spec by means of a REST API endpoint.
+
+== Description ==
+
+* Adds JSON feeds following the official [version 1 spec](https://jsonfeed.org/version/1).
+* Adds a new namespace `feed/v1` to the REST API.
+* Allows adding individual endpoints per post type, simply by specifying an additional argument when registering the post type. By default a feed is only added for regular posts (posts of the `post` post type).
+* Uses a proper REST API controller including schema for the endpoints.
+* Contains several filters to modify the feed responses as necessary.
+
+== Installation ==
+
+1. Upload the entire `wp-api-json-feed` folder to the `/wp-content/plugins/` directory or download it through the WordPress backend.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+
+Once the plugin is activated, it will work out of the box and provide a JSON feed for posts. If you want to provide JSON feeds for further post types, you need to specify an additional argument `show_json_feed` when registering the post type, and set it to a boolean `true`. You may also specify a `json_feed_base` argument being a string identifier that should be used in the feed URL. If no string identifier is provided, the post type slug will be used.
+
+== Frequently Asked Questions ==
+
+= How can I add a feed for my custom post type? =
+
+If you want to provide a JSON feed for your custom post type, you need to specify an additional argument `show_json_feed` when registering the post type, and set it to a boolean `true`. You may also specify a `json_feed_base` argument being a string identifier that should be used in the feed URL. If no string identifier is provided, the post type slug will be used.
+
+= Where should I submit my support request? =
+
+I preferably take support requests as [issues on Github](https://github.com/felixarntz/wp-api-json-feed/issues), so I would appreciate if you created an issue for your request there. However, if you don't have an account there and do not want to sign up, you can of course use the [wordpress.org support forums](https://wordpress.org/support/plugin/wp-api-json-feed) as well.
+
+= How can I contribute to the plugin? =
+
+If you're a developer and you have some ideas to improve the plugin or to solve a bug, feel free to raise an issue or submit a pull request in the [Github repository for the plugin](https://github.com/felixarntz/wp-api-json-feed).
+
+You can also contribute to the plugin by translating it. Simply visit [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/wp-api-json-feed) to get started.
+
+== Changelog ==
+
+= 1.0.0 =
+* First stable version
