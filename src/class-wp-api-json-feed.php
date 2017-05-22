@@ -112,6 +112,8 @@ class WP_API_JSON_Feed {
 	 *
 	 * @since 1.0.0
 	 * @access private
+	 *
+	 * @codeCoverageIgnore
 	 */
 	private function add_hooks() {
 		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ), 10, 0 );
