@@ -35,7 +35,8 @@ class Tests_WP_API_JSON_Feed extends WP_UnitTestCase {
 
 		_unregister_post_type( 'content' );
 
-		$this->assertTrue( $this->server->is_registered_endpoint( 'feed/v1', '/content' ) );
+		$routes = $this->server->get_routes();
+		$this->assertArrayHasKey( '/feed/v1/content', $routes );
 	}
 
 	public function test_render_feed_link_tag() {
@@ -114,6 +115,6 @@ class Tests_WP_API_JSON_Feed extends WP_UnitTestCase {
 	}
 
 	public function filter_wp_rest_server_class() {
-		return 'WP_API_JSON_Feed_REST_Server';
+		return 'Spy_REST_Server';
 	}
 }

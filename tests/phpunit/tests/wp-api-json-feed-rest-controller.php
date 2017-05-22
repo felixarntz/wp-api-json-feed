@@ -82,6 +82,8 @@ class Tests_WP_API_JSON_Feed_REST_Controller extends WP_Test_REST_Controller_Tes
 	}
 
 	public function test_get_item_with_invalid_page() {
+		$this->factory->post->create_many( 4 );
+
 		$request = new WP_REST_Request( 'GET', '/feed/v1/posts' );
 		$request->set_param( 'page', 100 );
 		$response = $this->server->dispatch( $request );
@@ -111,7 +113,7 @@ class Tests_WP_API_JSON_Feed_REST_Controller extends WP_Test_REST_Controller_Tes
 			'items',
 		), array_keys( $data ) );
 
-		$this->assertSame( 1, count( $data['items'][0] ) );
+		$this->assertSame( 1, count( $data['items'] ) );
 		$this->assertSame( (int) $feed['items'][0]->ID, (int) $data['items'][0]['id'] );
 	}
 

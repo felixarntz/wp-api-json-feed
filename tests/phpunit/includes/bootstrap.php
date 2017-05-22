@@ -26,5 +26,3 @@ if ( false !== getenv( 'WP_DEVELOP_DIR' ) ) {
 }
 
 require $test_root . '/includes/bootstrap.php';
-
-require dirname( __FILE__ ) . '/wp-api-json-feed-rest-server.php';
