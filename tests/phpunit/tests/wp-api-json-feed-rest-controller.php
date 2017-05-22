@@ -114,7 +114,7 @@ class Tests_WP_API_JSON_Feed_REST_Controller extends WP_Test_REST_Controller_Tes
 		), array_keys( $data ) );
 
 		$this->assertSame( 1, count( $data['items'] ) );
-		$this->assertSame( (int) $feed['items'][0]->ID, (int) $data['items'][0]['id'] );
+		$this->assertSame( $feed['items'][0]->guid, $data['items'][0]['id'] );
 	}
 
 	public function test_get_item_schema() {
