@@ -41,7 +41,7 @@ class Tests_WP_API_JSON_Feed_REST_Controller extends WP_Test_REST_Controller_Tes
 		$data = $response->get_data();
 
 		$this->assertArrayHasKey( 'items', $data );
-		$this->assertSame( (int) $counts['publish'], count( $data['items'] ) );
+		$this->assertSame( (int) $counts->publish, count( $data['items'] ) );
 	}
 
 	public function test_get_item_count_posts_with_limit() {
@@ -65,8 +65,8 @@ class Tests_WP_API_JSON_Feed_REST_Controller extends WP_Test_REST_Controller_Tes
 
 		$counts = wp_count_posts();
 
-		$page = ceil( (int) $counts['publish'] / 3 );
-		$expected = (int) $counts['publish'] % 3;
+		$page = ceil( (int) $counts->publish / 3 );
+		$expected = (int) $counts->publish % 3;
 
 		add_filter( 'pre_option_posts_per_rss', array( $this, 'filter_posts_per_rss' ) );
 
