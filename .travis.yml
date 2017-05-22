@@ -37,7 +37,7 @@ before_script:
 - |
   if [[ "$TRAVIS_PHP_VERSION" != "5.2" ]]; then
     composer selfupdate 1.0.0 --no-interaction
-    composer install --dev --no-interaction
+    composer install --no-interaction
   fi
 - PLUGIN_SLUG=$(basename $(pwd))
 - export WP_DEVELOP_DIR=/tmp/wordpress/
