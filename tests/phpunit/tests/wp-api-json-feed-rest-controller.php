@@ -10,7 +10,7 @@ class Tests_WP_API_JSON_Feed_REST_Controller extends WP_Test_REST_Controller_Tes
 		$this->assertArrayHasKey( '/feed/v1/posts', $routes );
 	}
 
-	public function test_get_item_basic() {
+	public function test_get_item() {
 		$request = new WP_REST_Request( 'GET', '/feed/v1/posts' );
 		$response = $this->server->dispatch( $request );
 		$data = $response->get_data();
@@ -88,6 +88,33 @@ class Tests_WP_API_JSON_Feed_REST_Controller extends WP_Test_REST_Controller_Tes
 		$this->assertErrorResponse( 'rest_feed_invalid_page_number', $response, 400 );
 	}
 
+	public function test_prepare_item() {
+		$controller = new WP_API_JSON_Feed_REST_Controller( get_post_type_object( 'post' ) );
+
+		$feed = array(
+			'version'       => 'https://jsonfeed.org/version/1',
+			'title'         => 'My Feed',
+			'home_page_url' => 'https://www.example.com',
+			'feed_url'      => 'https://www.example.com/wp-json/feed/v1/posts',
+			'items'         => array( $this->factory->post->create_and_get() ),
+			'invalid'       => true,
+		);
+
+		$response = $controller->prepare_item_for_response( $feed, new WP_REST_Request( 'GET', '/feed/v1/posts' ) );
+		$data = $response->get_data();
+
+		$this->assertEquals( array(
+			'version',
+			'title',
+			'home_page_url',
+			'feed_url',
+			'items',
+		), array_keys( $data ) );
+
+		$this->assertSame( 1, count( $data['items'][0] ) );
+		$this->assertSame( (int) $feed['items'][0]->ID, (int) $data['items'][0]['id'] );
+	}
+
 	public function test_get_item_schema() {
 		$controller = new WP_API_JSON_Feed_REST_Controller( get_post_type_object( 'post' ) );
 		$schema = $controller->get_item_schema();
@@ -143,5 +170,25 @@ class Tests_WP_API_JSON_Feed_REST_Controller extends WP_Test_REST_Controller_Tes
 
 	public function filter_posts_per_rss() {
 		return 3;
+	}
+
+	public function test_context_param() {
+		/** Feeds don't support a context param */
+	}
+
+	public function test_get_items() {
+		/** Only a single feed can be queried */
+	}
+
+	public function test_create_item() {
+		/** Feeds can't be created */
+	}
+
+	public function test_update_item() {
+		/** Feeds can't be updated */
+	}
+
+	public function test_delete_item() {
+		/** Feeds can't be deleted */
 	}
 }
