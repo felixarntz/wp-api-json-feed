@@ -15,13 +15,12 @@
   "authors": [
     {
       "name": "Felix Arntz",
-      "email": "felix-arntz@leaves-and-love.net",
-      "homepage": "https://leaves-and-love.net",
+      "email": "hello@felix-arntz.me",
+      "homepage": "https://felix-arntz.me",
       "role": "Developer"
     }
   ],
   "support": {
-    "email": "felix-arntz@leaves-and-love.net",
     "issues": "https://github.com/felixarntz/wp-api-json-feed/issues"
   },
   "require": {
