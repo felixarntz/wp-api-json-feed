@@ -22,7 +22,7 @@
   "bugs": {
     "url" : "https://github.com/felixarntz/wp-api-json-feed/issues"
   },
-  "license": "GPL-3.0",
+  "license": "GPL-3.0-or-later",
   "engines": {
     "node": ">= 0.10.0"
   },

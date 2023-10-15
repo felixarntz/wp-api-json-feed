@@ -10,8 +10,8 @@ Requires at least: 4.7
 Tested up to:      4.8
 Requires PHP:      5.2
 Stable tag:        1.0.0
-License:           GNU General Public License v3
-License URI:       http://www.gnu.org/licenses/gpl-3.0.html
+License:           GNU General Public License v3 (or later)
+License URI:       https://www.gnu.org/licenses/gpl-3.0.html
 Tags:              json feed, feed, rest api
 
 Implements a JSON feed following the official JSON feed specification by means of a REST API endpoint.

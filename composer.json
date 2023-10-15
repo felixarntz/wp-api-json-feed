@@ -2,7 +2,7 @@
   "name": "felixarntz/wp-api-json-feed",
   "description": "Implements a JSON feed following the official JSON feed specification by means of a REST API endpoint.",
   "version": "1.0.0",
-  "license": "GPL-3.0",
+  "license": "GPL-3.0-or-later",
   "type": "wordpress-plugin",
   "keywords": [
     "wordpress",
