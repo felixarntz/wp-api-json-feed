@@ -50,24 +50,28 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 	 * @see register_rest_route()
 	 */
 	public function register_routes() {
-		register_rest_route( $this->namespace, '/' . $this->rest_base, array(
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->rest_base,
 			array(
-				'methods'             => WP_REST_Server::READABLE,
-				'callback'            => array( $this, 'get_item' ),
-				'permission_callback' => array( $this, 'get_item_permissions_check' ),
-				'args'                => array(
-					'page'                   => array(
-						'description'        => __( 'Current page of the feed.', 'wp-api-json-feed' ),
-						'type'               => 'integer',
-						'default'            => 1,
-						'sanitize_callback'  => 'absint',
-						'validate_callback'  => 'rest_validate_request_arg',
-						'minimum'            => 1,
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_item' ),
+					'permission_callback' => array( $this, 'get_item_permissions_check' ),
+					'args'                => array(
+						'page' => array(
+							'description'       => __( 'Current page of the feed.', 'wp-api-json-feed' ),
+							'type'              => 'integer',
+							'default'           => 1,
+							'sanitize_callback' => 'absint',
+							'validate_callback' => 'rest_validate_request_arg',
+							'minimum'           => 1,
+						),
 					),
 				),
-			),
-			'schema' => array( $this, 'get_public_item_schema' ),
-		) );
+				'schema' => array( $this, 'get_public_item_schema' ),
+			)
+		);
 	}
 
 	/**
@@ -106,7 +110,7 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 		$posts_query  = new WP_Query();
 		$query_result = $posts_query->query( $query_args );
 
-		$page = ! empty( $query_args['paged'] ) ? (int) $query_args['paged'] : 1;
+		$page        = ! empty( $query_args['paged'] ) ? (int) $query_args['paged'] : 1;
 		$total_posts = $posts_query->found_posts;
 
 		if ( ! empty( $query_args['paged'] ) && $total_posts < 1 ) {
@@ -338,7 +342,6 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 		 */
 		$data = apply_filters( 'wp_api_json_feed_post_data', $data, $feed, $schema, $request, $this->post_type->name );
 
-
 		return rest_ensure_response( $data );
 	}
 
@@ -488,42 +491,42 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 	 */
 	protected function get_item_schema_properties() {
 		return array(
-			'id'           => array(
+			'id'             => array(
 				'description' => __( 'Unique identifier for that item for that feed over time. ', 'wp-api-json-feed' ),
 				'type'        => 'string',
 			),
-			'url'          => array(
+			'url'            => array(
 				'description' => __( 'URL of the resource described by the item.', 'wp-api-json-feed' ),
 				'type'        => 'string',
 				'format'      => 'uri',
 			),
-			'external_url' => array(
+			'external_url'   => array(
 				'description' => __( 'URL of a referenced page elsewhere.', 'wp-api-json-feed' ),
 				'type'        => 'string',
 				'format'      => 'uri',
 			),
-			'title'        => array(
+			'title'          => array(
 				'description' => __( 'Plain text title of the item.', 'wp-api-json-feed' ),
 				'type'        => 'string',
 			),
-			'content_html' => array(
+			'content_html'   => array(
 				'description' => __( 'HTML content of the item.', 'wp-api-json-feed' ),
 				'type'        => 'string',
 			),
-			'content_text' => array(
+			'content_text'   => array(
 				'description' => __( 'Plain text content of the item.', 'wp-api-json-feed' ),
 				'type'        => 'string',
 			),
-			'summary'      => array(
+			'summary'        => array(
 				'description' => __( 'A plain text sentence or two describing the item.', 'wp-api-json-feed' ),
 				'type'        => 'string',
 			),
-			'image'        => array(
+			'image'          => array(
 				'description' => __( 'URL of the main image for the item.', 'wp-api-json-feed' ),
 				'type'        => 'string',
 				'format'      => 'uri',
 			),
-			'banner_image'  => array(
+			'banner_image'   => array(
 				'description' => __( 'URL of an image to use as a banner.', 'wp-api-json-feed' ),
 				'type'        => 'string',
 				'format'      => 'uri',
@@ -538,7 +541,7 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 				'type'        => 'string',
 				'format'      => 'date-time',
 			),
-			'author'        => array(
+			'author'         => array(
 				'description' => __( 'Author of the item.', 'wp-api-json-feed' ),
 				'type'        => 'object',
 				'properties'  => $this->get_author_schema_properties(),
@@ -633,14 +636,14 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 	 * @return array Post data for a feed.
 	 */
 	protected function prepare_post_for_feed( $post, $schema, $request ) {
-		$GLOBALS['post'] = $post;
+		$GLOBALS['post'] = $post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		setup_postdata( $post );
 
 		$post_data = array(
-			'id' => get_the_guid(),
+			'id'    => get_the_guid(),
 			/** This filter is documented in wp-includes/feed.php */
-			'url' => apply_filters( 'the_permalink_rss', get_permalink() ),
+			'url'   => apply_filters( 'the_permalink_rss', get_permalink() ),
 			'title' => get_the_title_rss(),
 		);
 

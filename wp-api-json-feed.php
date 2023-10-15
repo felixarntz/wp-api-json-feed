@@ -12,7 +12,7 @@
  * Description: Implements a JSON feed following the official JSON feed specification by means of a REST API endpoint.
  * Version: 1.0.0
  * Requires at least: 4.7
- * Requires PHP: 5.2
+ * Requires PHP: 5.3
  * Author: Felix Arntz
  * Author URI: https://felix-arntz.me
  * License: GNU General Public License v3 (or later)
@@ -55,7 +55,13 @@ function wp_api_json_feed_show_version_error_notice() {
 	?>
 	<div class="notice notice-error">
 		<p>
-			<?php printf( __( 'The WP-API JSON Feed plugin requires at least WordPress version 4.7, but you are running version %s.', 'wp-api-json-feed' ), get_bloginfo( 'version' ) ); ?>
+			<?php
+			printf(
+				/* translators: %s: WordPress version number */
+				esc_html__( 'The WP-API JSON Feed plugin requires at least WordPress version 4.7, but you are running version %s.', 'wp-api-json-feed' ),
+				esc_html( get_bloginfo( 'version' ) )
+			);
+			?>
 		</p>
 	</div>
 	<?php

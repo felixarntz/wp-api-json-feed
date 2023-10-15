@@ -51,7 +51,7 @@ class WP_API_JSON_Feed {
 	 * @access public
 	 */
 	public function register_rest_routes() {
-		require_once dirname( __FILE__ ) . '/class-wp-api-json-feed-rest-controller.php';
+		require_once __DIR__ . '/class-wp-api-json-feed-rest-controller.php';
 
 		foreach ( get_post_types( array( 'show_json_feed' => true ), 'objects' ) as $post_type ) {
 			$controller = new WP_API_JSON_Feed_REST_Controller( $post_type );
@@ -73,7 +73,7 @@ class WP_API_JSON_Feed {
 			return;
 		}
 
-		if ( ! $post_type_object->show_json_feed ) {
+		if ( ! isset( $post_type_object->show_json_feed ) || ! $post_type_object->show_json_feed ) {
 			return;
 		}
 
@@ -93,7 +93,7 @@ class WP_API_JSON_Feed {
 	 *
 	 * @param array  $args      Array of arguments for registering a post type.
 	 * @param string $post_type Post type key.
-	 * @param array Array of modified post type arguments.
+	 * @return array Array of modified post type arguments.
 	 */
 	public function filter_post_type_args( $args, $post_type ) {
 		if ( ! isset( $args['show_json_feed'] ) ) {
