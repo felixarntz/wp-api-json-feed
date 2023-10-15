@@ -8,7 +8,7 @@
 
 # WP-API JSON Feed
 
-Implements a JSON feed following the version 1 spec by means of a REST API endpoint.
+Implements a JSON feed following the official JSON feed specification by means of a REST API endpoint.
 
 ## Features
 

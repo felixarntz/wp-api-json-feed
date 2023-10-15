@@ -14,7 +14,7 @@ License:           GNU General Public License v3
 License URI:       http://www.gnu.org/licenses/gpl-3.0.html
 Tags:              json feed, feed, rest api
 
-Implements a JSON feed following the version 1 spec by means of a REST API endpoint.
+Implements a JSON feed following the official JSON feed specification by means of a REST API endpoint.
 
 == Description ==
 
