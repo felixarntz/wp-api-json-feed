@@ -3,9 +3,9 @@
 Plugin Name:       WP-API JSON Feed
 Plugin URI:        https://wordpress.org/plugins/wp-api-json-feed/
 Author:            Felix Arntz
-Author URI:        https://leaves-and-love.net
+Author URI:        https://felix-arntz.me
 Contributors:      flixos90
-Donate link:       https://leaves-and-love.net/wordpress-plugins/
+Donate link:       https://felix-arntz.me/wordpress-plugins/
 Requires at least: 4.7
 Tested up to:      4.8
 Requires PHP:      5.2

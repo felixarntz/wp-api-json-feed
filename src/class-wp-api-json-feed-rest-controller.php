@@ -3,7 +3,7 @@
  * WP_API_JSON_Feed_REST_Controller class
  *
  * @package WPAPIJSONFeed
- * @author Felix Arntz <felix-arntz@leaves-and-love.net>
+ * @author Felix Arntz <hello@felix-arntz.me>
  * @since 1.0.0
  */
 

@@ -32,7 +32,7 @@ var config = {
 	licenseURI: 'https://www.gnu.org/licenses/gpl-3.0.html',
 	tags: keywords.join( ', ' ),
 	contributors: [ 'flixos90' ].join( ', ' ),
-	donateLink: 'https://leaves-and-love.net/wordpress-plugins/',
+	donateLink: 'https://felix-arntz.me/wordpress-plugins/',
 	minRequired: '4.7',
 	testedUpTo: '4.8',
 	translateURI: 'https://translate.wordpress.org/projects/wp-plugins/' + pkg.name,
