@@ -1,22 +1,24 @@
 <?php
-/*
-Plugin Name: WP-API JSON Feed
-Plugin URI:  https://wordpress.org/plugins/wp-api-json-feed/
-Description: Implements a JSON feed following the version 1 spec by means of a REST API endpoint.
-Version:     1.0.0
-Author:      Felix Arntz
-Author URI:  https://leaves-and-love.net
-License:     GNU General Public License v3
-License URI: http://www.gnu.org/licenses/gpl-3.0.html
-Text Domain: wp-api-json-feed
-Tags:        json feed, feed, rest api
-*/
 /**
  * Plugin bootstrap functions.
  *
  * @package WPAPIJSONFeed
  * @author Felix Arntz <felix-arntz@leaves-and-love.net>
  * @since 1.0.0
+ *
+ * @wordpress-plugin
+ * Plugin Name: WP-API JSON Feed
+ * Plugin URI: https://wordpress.org/plugins/wp-api-json-feed/
+ * Description: Implements a JSON feed following the version 1 spec by means of a REST API endpoint.
+ * Version: 1.0.0
+ * Requires at least: 4.7
+ * Requires PHP: 5.2
+ * Author: Felix Arntz
+ * Author URI: https://felix-arntz.me
+ * License: GNU General Public License v3
+ * License URI: http://www.gnu.org/licenses/gpl-3.0.html
+ * Text Domain: wp-api-json-feed
+ * Tags: json feed, feed, rest api
  */
 
 defined( 'ABSPATH' ) || exit;
