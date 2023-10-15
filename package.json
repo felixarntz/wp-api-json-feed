@@ -1,7 +1,7 @@
 {
   "name": "wp-api-json-feed",
-  "version": "1.0.0",
   "description": "Implements a JSON feed following the official JSON feed specification by means of a REST API endpoint.",
+  "license": "GPL-3.0-or-later",
   "keywords": [
     "wordpress",
     "plugin",
@@ -9,25 +9,25 @@
     "feed",
     "rest api"
   ],
+  "homepage": "https://wordpress.org/plugins/wp-api-json-feed/",
   "author": {
     "name": "Felix Arntz",
     "email": "hello@felix-arntz.me",
     "url": "https://felix-arntz.me"
   },
-  "homepage": "https://wordpress.org/plugins/wp-api-json-feed/",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/felixarntz/wp-api-json-feed.git"
-  },
-  "bugs": {
-    "url" : "https://github.com/felixarntz/wp-api-json-feed/issues"
-  },
-  "license": "GPL-3.0-or-later",
-  "engines": {
-    "node": ">= 0.10.0"
-  },
+  "repository": "git+https://github.com/felixarntz/wp-api-json-feed.git",
   "devDependencies": {
-    "gulp": "^3.9.1",
-    "gulp-replace": "~0.5.4"
+    "@wordpress/env": "^8.7.0",
+    "@wordpress/scripts": "^26.12.0"
+  },
+  "scripts": {
+    "format-php": "wp-env run cli --env-cwd=wp-content/plugins/$(basename $(pwd)) composer format",
+    "phpstan": "wp-env run cli --env-cwd=wp-content/plugins/$(basename $(pwd)) composer phpstan",
+    "lint-php": "wp-env run cli --env-cwd=wp-content/plugins/$(basename $(pwd)) composer lint",
+    "pretest-php": "wp-env run tests-cli --env-cwd=wp-content/plugins/$(basename $(pwd)) composer update",
+    "test-php": "wp-env run tests-cli --env-cwd=wp-content/plugins/$(basename $(pwd)) vendor/bin/phpunit -c phpunit.xml.dist --verbose",
+    "pretest-php-multisite": "wp-env run tests-cli --env-cwd=wp-content/plugins/$(basename $(pwd)) composer update",
+    "test-php-multisite": "wp-env run tests-cli --env-cwd=wp-content/plugins/$(basename $(pwd)) vendor/bin/phpunit -c tests/phpunit/multisite.xml --verbose",
+    "wp-env": "wp-env"
   }
 }

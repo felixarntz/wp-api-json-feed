@@ -5,8 +5,8 @@
  */
 
 class Tests_WP_API_JSON_Feed extends WP_UnitTestCase {
-	public function setUp() {
-		parent::setUp();
+	public function set_up() {
+		parent::set_up();
 
 		$GLOBALS['wp_rest_server'] = null;
 
@@ -17,10 +17,10 @@ class Tests_WP_API_JSON_Feed extends WP_UnitTestCase {
 		remove_filter( 'wp_rest_server_class', array( $this, 'filter_wp_rest_server_class' ) );
 	}
 
-	public function tearDown() {
+	public function tear_down() {
 		$GLOBALS['wp_rest_server'] = null;
 
-		parent::tearDown();
+		parent::tear_down();
 	}
 
 	public function test_instance() {

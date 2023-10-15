@@ -1,5 +1,5 @@
 <phpunit
-	bootstrap="./bootstrap.php"
+	bootstrap="tests/phpunit/bootstrap.php"
 	backupGlobals="false"
 	colors="true"
 	convertErrorsToExceptions="true"
@@ -7,17 +7,16 @@
 	convertWarningsToExceptions="true"
 	>
 	<php>
-		<env name="WP_MULTISITE" value="1" />
 		<env name="WORDPRESS_TABLE_PREFIX" value="wptests_" />
 	</php>
 	<testsuites>
 		<testsuite name="default">
-			<directory suffix=".php">./tests</directory>
+			<directory suffix=".php">./tests/phpunit/tests</directory>
 		</testsuite>
 	</testsuites>
 	<groups>
 		<exclude>
-			<group>ms-excluded</group>
+			<group>ms-required</group>
 		</exclude>
 	</groups>
 </phpunit>
