@@ -20,8 +20,6 @@ class WP_API_JSON_Feed {
 	 * The main instance.
 	 *
 	 * @since 1.0.0
-	 * @access private
-	 * @static
 	 * @var WP_API_JSON_Feed|null
 	 */
 	private static $instance = null;
@@ -30,8 +28,6 @@ class WP_API_JSON_Feed {
 	 * Returns the main instance.
 	 *
 	 * @since 1.0.0
-	 * @access public
-	 * @static
 	 *
 	 * @return WP_API_JSON_Feed The main class instance.
 	 */
@@ -48,7 +44,6 @@ class WP_API_JSON_Feed {
 	 * Registers REST API routes for each post type that supports a JSON feed.
 	 *
 	 * @since 1.0.0
-	 * @access public
 	 */
 	public function register_rest_routes() {
 		require_once __DIR__ . '/class-wp-api-json-feed-rest-controller.php';
@@ -63,7 +58,6 @@ class WP_API_JSON_Feed {
 	 * Renders a link tag for a JSON feed to display in the <head>.
 	 *
 	 * @since 1.0.0
-	 * @access public
 	 *
 	 * @param string $post_type Optional. Post type to render the feed link for. Default 'post'.
 	 */
@@ -111,7 +105,6 @@ class WP_API_JSON_Feed {
 	 * Adds the necessary hooks for the plugin to work.
 	 *
 	 * @since 1.0.0
-	 * @access private
 	 */
 	private function add_hooks() {
 		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ), 10, 0 );

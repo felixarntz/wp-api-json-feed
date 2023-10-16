@@ -22,7 +22,6 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 	 * Post type object.
 	 *
 	 * @since 1.0.0
-	 * @access protected
 	 * @var WP_Post_Type
 	 */
 	protected $post_type;
@@ -31,7 +30,6 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 	 * Constructor.
 	 *
 	 * @since 1.0.0
-	 * @access public
 	 *
 	 * @param WP_Post_Type $post_type Post type object.
 	 */
@@ -45,7 +43,6 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 	 * Registers the route for the feed of the controller.
 	 *
 	 * @since 1.0.0
-	 * @access public
 	 *
 	 * @see register_rest_route()
 	 */
@@ -78,7 +75,6 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 	 * Checks if a given request has access to read the feed.
 	 *
 	 * @since 1.0.0
-	 * @access public
 	 *
 	 * @param WP_REST_Request $request Full details about the request.
 	 * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
@@ -91,7 +87,6 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 	 * Retrieves the feed.
 	 *
 	 * @since 1.0.0
-	 * @access public
 	 *
 	 * @param WP_REST_Request $request Full details about the request.
 	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
@@ -280,7 +275,6 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 	 * Prepares a feed output for response.
 	 *
 	 * @since 1.0.0
-	 * @access public
 	 *
 	 * @param array           $feed    Feed data.
 	 * @param WP_REST_Request $request Request object.
@@ -349,7 +343,6 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 	 * Retrieves the feed's schema, conforming to JSON Schema.
 	 *
 	 * @since 1.0.0
-	 * @access public
 	 *
 	 * @return array Item schema data.
 	 */
@@ -463,7 +456,6 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 	 * Retrieves the properties for a feed hub's schema, conforming to JSON Schema.
 	 *
 	 * @since 1.0.0
-	 * @access protected
 	 *
 	 * @return array Hub schema property data.
 	 */
@@ -485,7 +477,6 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 	 * Retrieves the properties for a feed item's schema, conforming to JSON Schema.
 	 *
 	 * @since 1.0.0
-	 * @access protected
 	 *
 	 * @return array Item schema property data.
 	 */
@@ -568,7 +559,6 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 	 * Retrieves the properties for a feed item attachment's schema, conforming to JSON Schema.
 	 *
 	 * @since 1.0.0
-	 * @access protected
 	 *
 	 * @return array Item attachment schema property data.
 	 */
@@ -601,7 +591,6 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 	 * Retrieves the properties for an author's schema, conforming to JSON Schema.
 	 *
 	 * @since 1.0.0
-	 * @access protected
 	 *
 	 * @return array Author schema property data.
 	 */
@@ -628,7 +617,6 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 	 * Prepares a post output for a feed.
 	 *
 	 * @since 1.0.0
-	 * @access public
 	 *
 	 * @param WP_Post         $post    Post object.
 	 * @param array           $schema  Schema data for a post in a feed.
@@ -714,7 +702,6 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 	 * Gets an author data array for a specific user to show in the JSON feed.
 	 *
 	 * @since 1.0.0
-	 * @access protected
 	 *
 	 * @param WP_User $user User object.
 	 * @return array Associative array of feed author data.
