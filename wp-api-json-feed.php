@@ -27,8 +27,6 @@ defined( 'ABSPATH' ) || exit;
  * Checks if the minimum WordPress version is installed, and if so, initializes the plugin.
  *
  * @since 1.0.0
- *
- * @codeCoverageIgnore
  */
 function wp_api_json_feed_load() {
 	load_plugin_textdomain( 'wp-api-json-feed' );
@@ -48,8 +46,6 @@ add_action( 'plugins_loaded', 'wp_api_json_feed_load', 10, 0 );
  * Renders an admin notice that the minimum WordPress version requirement is not met.
  *
  * @since 1.0.0
- *
- * @codeCoverageIgnore
  */
 function wp_api_json_feed_show_version_error_notice() {
 	?>
