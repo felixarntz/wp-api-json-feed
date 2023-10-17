@@ -92,183 +92,44 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
 	public function get_item( $request ) {
-		$query_args = array(
-			'posts_per_page' => get_option( 'posts_per_rss', 10 ),
-			'post_type'      => $this->post_type->name,
-			'post_status'    => 'publish',
-		);
+		$query_result = $this->get_query_result( $request );
 
-		if ( isset( $request['page'] ) ) {
-			$query_args['paged'] = $request['page'];
-		}
-
-		$posts_query  = new WP_Query();
-		$query_result = $posts_query->query( $query_args );
-
-		$page        = ! empty( $query_args['paged'] ) ? (int) $query_args['paged'] : 1;
-		$total_posts = $posts_query->found_posts;
-
-		if ( ! empty( $query_args['paged'] ) && $total_posts < 1 ) {
-			// Out-of-bounds, run the query again without LIMIT for total count.
-			unset( $query_args['paged'] );
-
-			$count_query = new WP_Query();
-			$count_query->query( $query_args );
-			$total_posts = $count_query->found_posts;
-		}
-
-		$max_pages = ceil( $total_posts / (int) $posts_query->query_vars['posts_per_page'] );
-
-		if ( $page > $max_pages && $total_posts > 0 ) {
+		if ( $query_result['page'] > $query_result['max_pages'] && $query_result['total'] ) {
 			return new WP_Error( 'rest_feed_invalid_page_number', __( 'The page number requested is larger than the number of pages available.', 'wp-api-json-feed' ), array( 'status' => 400 ) );
 		}
 
+		// Required fields.
 		$feed = array(
 			'version'       => 'https://jsonfeed.org/version/1',
 			'home_page_url' => get_post_type_archive_link( $this->post_type->name ),
 			'feed_url'      => rest_url( sprintf( '%s/%s', $this->namespace, $this->rest_base ) ),
-			'items'         => $query_result,
+			'items'         => $query_result['posts'],
+			'title'         => $this->get_feed_title(),
 		);
-
 		if ( ! $feed['home_page_url'] ) {
 			$feed['home_page_url'] = get_home_url();
 		}
 
-		if ( 'post' === $this->post_type->name ) {
-			$feed_title = get_bloginfo( 'name' );
-		} else {
-			/* translators: 1: site title, 2: post type plural label */
-			$feed_title = sprintf( _x( '%1$s: %2$s', 'feed title', 'wp-api-json-feed' ), get_bloginfo( 'name' ), $this->post_type->labels->name );
-		}
-
-		/**
-		 * Filters the feed title for the JSON feed of a specific post type.
-		 *
-		 * The dynamic part of the filter `$this->post_type->name` refers to the post type slug for the feed.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param string $feed_title Feed title.
-		 */
-		$feed_title = apply_filters( "wp_api_json_feed_title_{$this->post_type->name}", $feed_title );
-
-		/**
-		 * Filters the feed title for a JSON feed.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param string $feed_title     Feed title.
-		 * @param string $post_type_slug Post type slug for the feed.
-		 */
-		$feed_title = apply_filters( 'wp_api_json_feed_title', $feed_title, $this->post_type->name );
-
-		// Make sure the feed title is never empty.
-		if ( empty( $feed_title ) ) {
-			$feed_title = get_bloginfo( 'name' );
-		}
-
-		if ( 'post' === $this->post_type->name ) {
-			$feed_description = get_bloginfo( 'description' );
-		} else {
-			$feed_description = $this->post_type->description;
-		}
-
-		/**
-		 * Filters the feed description for the JSON feed of a specific post type.
-		 *
-		 * The dynamic part of the filter `$this->post_type->name` refers to the post type slug for the feed.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param string $feed_description Feed description.
-		 */
-		$feed_description = apply_filters( "wp_api_json_feed_description_{$this->post_type->name}", $feed_description );
-
-		/**
-		 * Filters the feed description for a JSON feed.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param string $feed_description Feed description.
-		 * @param string $post_type_slug   Post type slug for the feed.
-		 */
-		$feed_description = apply_filters( 'wp_api_json_feed_description', $feed_description, $this->post_type->name );
-
-		$feed['title'] = $feed_title;
-		if ( ! empty( $feed_description ) ) {
-			$feed['description'] = $feed_description;
-		}
-
-		$show_feed_author = false;
-		if ( 'post' === $this->post_type->name && ! is_multi_author() ) {
-			$show_feed_author = true;
-		}
-
-		/**
-		 * Filters whether to show the author for the entire feed.
-		 *
-		 * If enabled, the user with the admin email address will be displayed.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param bool   $show_feed_author Whether to show the feed author. Default is true on a single author blog,
-		 *                                 false for a multi-author blog.
-		 * @param string $post_type_slug   Post type slug for the feed.
-		 */
-		$show_feed_author = apply_filters( 'wp_api_json_feed_show_feed_author', $show_feed_author, $this->post_type->name );
-
-		if ( $show_feed_author ) {
-			$feed_user = get_user_by( 'email', get_option( 'admin_email' ) );
-			if ( $feed_user && $feed_user->exists() ) {
-				$feed['author'] = $feed_user;
+		// Optional fields.
+		$optional = array(
+			'description' => $this->get_feed_description(),
+			'author'      => $this->get_feed_author(),
+			'icon'        => $this->get_feed_icon(),
+			'favicon'     => $this->get_feed_favicon(),
+			'prev_url'    => $this->get_feed_prev_url( $feed['feed_url'], $query_result ),
+			'next_url'    => $this->get_feed_next_url( $feed['feed_url'], $query_result ),
+			'expired'     => $this->is_feed_expired(),
+		);
+		foreach ( $optional as $key => $value ) {
+			if ( ! $value ) {
+				continue;
 			}
+			$feed[ $key ] = $value;
 		}
 
-		if ( has_site_icon() ) {
-			$feed_icon = get_site_icon_url( 512 );
-			if ( ! empty( $feed_icon ) ) {
-				$feed['icon'] = $feed_icon;
-			}
-
-			$feed_favicon = get_site_icon_url( 64 );
-			if ( ! empty( $feed_favicon ) ) {
-				$feed['favicon'] = $feed_favicon;
-			}
-		}
-
-		if ( $page > 1 ) {
-			$prev_page = $page - 1;
-
-			if ( $prev_page > $max_pages ) {
-				$prev_page = $max_pages;
-			}
-
-			$feed['prev_url'] = add_query_arg( 'page', $prev_page, $feed['feed_url'] );
-		}
-
-		if ( $max_pages > $page ) {
-			$next_page = $page + 1;
-
-			$feed['next_url'] = add_query_arg( 'page', $next_page, $feed['feed_url'] );
-		}
-
-		/**
-		 * Filters whether the feed should be displayed as expired.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param bool   $is_feed_expired Whether the feed has expired. Default false.
-		 * @param string $post_type_slug  Post type slug for the feed.
-		 */
-		$is_feed_expired = apply_filters( 'wp_api_json_feed_is_expired', false, $this->post_type->name );
-
-		if ( $is_feed_expired ) {
-			$feed['expired'] = true;
-		}
-
-		$data = $this->prepare_item_for_response( $feed, $request );
-
-		return rest_ensure_response( $data );
+		return rest_ensure_response(
+			$this->prepare_item_for_response( $feed, $request )
+		);
 	}
 
 	/**
@@ -351,81 +212,7 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 			'$schema'    => 'http://json-schema.org/schema#',
 			'title'      => "{$this->post_type->name}_feed",
 			'type'       => 'object',
-			'properties' => array(
-				'version'       => array(
-					'description' => __( 'URL of the version of the format the feed uses.', 'wp-api-json-feed' ),
-					'type'        => 'string',
-					'format'      => 'uri',
-					'arg_options' => array(
-						'required' => true,
-					),
-				),
-				'title'         => array(
-					'description' => __( 'Name of the feed.', 'wp-api-json-feed' ),
-					'type'        => 'string',
-					'arg_options' => array(
-						'required' => true,
-					),
-				),
-				'home_page_url' => array(
-					'description' => __( 'URL of the resource that the feed describes.', 'wp-api-json-feed' ),
-					'type'        => 'string',
-					'format'      => 'uri',
-				),
-				'feed_url'      => array(
-					'description' => __( 'URL of the feed.', 'wp-api-json-feed' ),
-					'type'        => 'string',
-					'format'      => 'uri',
-				),
-				'description'   => array(
-					'description' => __( 'Provides more detail on what the feed is about.', 'wp-api-json-feed' ),
-					'type'        => 'string',
-				),
-				'user_comment'  => array(
-					'description' => __( 'Description of the purpose of the feed.', 'wp-api-json-feed' ),
-					'type'        => 'string',
-				),
-				'next_url'      => array(
-					'description' => __( 'URL of a feed that provides the next n items, where n is determined by the publisher.', 'wp-api-json-feed' ),
-					'type'        => 'string',
-					'format'      => 'uri',
-				),
-				'icon'          => array(
-					'description' => __( 'URL of an image for the feed suitable to be used in a timeline.', 'wp-api-json-feed' ),
-					'type'        => 'string',
-					'format'      => 'uri',
-				),
-				'favicon'       => array(
-					'description' => __( 'URL of an image for the feed suitable to be used in a source list.', 'wp-api-json-feed' ),
-					'type'        => 'string',
-					'format'      => 'uri',
-				),
-				'author'        => array(
-					'description' => __( 'The feed author.', 'wp-api-json-feed' ),
-					'type'        => 'object',
-					'properties'  => $this->get_author_schema_properties(),
-				),
-				'expired'       => array(
-					'description' => __( 'Whether or not the feed is finished.', 'wp-api-json-feed' ),
-					'type'        => 'boolean',
-				),
-				'hubs'          => array(
-					'description' => __( 'Endpoints that can be used to subscribe to real-time notifications from the publisher of this feed.', 'wp-api-json-feed' ),
-					'type'        => 'array',
-					'items'       => array(
-						'type'       => 'object',
-						'properties' => $this->get_hub_schema_properties(),
-					),
-				),
-				'items'         => array(
-					'description' => __( 'The items of the feed.', 'wp-api-json-feed' ),
-					'type'        => 'array',
-					'items'       => array(
-						'type'       => 'object',
-						'properties' => $this->get_item_schema_properties(),
-					),
-				),
-			),
+			'properties' => $this->get_schema_properties(),
 		);
 
 		/**
@@ -450,6 +237,91 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 		$schema = apply_filters( 'wp_api_json_feed_schema', $schema, $this->post_type->name );
 
 		return $schema;
+	}
+
+	/**
+	 * Retrieves the properties for a feed schema.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return array Feed schema property data.
+	 */
+	protected function get_schema_properties() {
+		return array(
+			'version'       => array(
+				'description' => __( 'URL of the version of the format the feed uses.', 'wp-api-json-feed' ),
+				'type'        => 'string',
+				'format'      => 'uri',
+				'arg_options' => array(
+					'required' => true,
+				),
+			),
+			'title'         => array(
+				'description' => __( 'Name of the feed.', 'wp-api-json-feed' ),
+				'type'        => 'string',
+				'arg_options' => array(
+					'required' => true,
+				),
+			),
+			'home_page_url' => array(
+				'description' => __( 'URL of the resource that the feed describes.', 'wp-api-json-feed' ),
+				'type'        => 'string',
+				'format'      => 'uri',
+			),
+			'feed_url'      => array(
+				'description' => __( 'URL of the feed.', 'wp-api-json-feed' ),
+				'type'        => 'string',
+				'format'      => 'uri',
+			),
+			'description'   => array(
+				'description' => __( 'Provides more detail on what the feed is about.', 'wp-api-json-feed' ),
+				'type'        => 'string',
+			),
+			'user_comment'  => array(
+				'description' => __( 'Description of the purpose of the feed.', 'wp-api-json-feed' ),
+				'type'        => 'string',
+			),
+			'next_url'      => array(
+				'description' => __( 'URL of a feed that provides the next n items, where n is determined by the publisher.', 'wp-api-json-feed' ),
+				'type'        => 'string',
+				'format'      => 'uri',
+			),
+			'icon'          => array(
+				'description' => __( 'URL of an image for the feed suitable to be used in a timeline.', 'wp-api-json-feed' ),
+				'type'        => 'string',
+				'format'      => 'uri',
+			),
+			'favicon'       => array(
+				'description' => __( 'URL of an image for the feed suitable to be used in a source list.', 'wp-api-json-feed' ),
+				'type'        => 'string',
+				'format'      => 'uri',
+			),
+			'author'        => array(
+				'description' => __( 'The feed author.', 'wp-api-json-feed' ),
+				'type'        => 'object',
+				'properties'  => $this->get_author_schema_properties(),
+			),
+			'expired'       => array(
+				'description' => __( 'Whether or not the feed is finished.', 'wp-api-json-feed' ),
+				'type'        => 'boolean',
+			),
+			'hubs'          => array(
+				'description' => __( 'Endpoints that can be used to subscribe to real-time notifications from the publisher of this feed.', 'wp-api-json-feed' ),
+				'type'        => 'array',
+				'items'       => array(
+					'type'       => 'object',
+					'properties' => $this->get_hub_schema_properties(),
+				),
+			),
+			'items'         => array(
+				'description' => __( 'The items of the feed.', 'wp-api-json-feed' ),
+				'type'        => 'array',
+				'items'       => array(
+					'type'       => 'object',
+					'properties' => $this->get_item_schema_properties(),
+				),
+			),
+		);
 	}
 
 	/**
@@ -728,5 +600,256 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 		}
 
 		return $author_data;
+	}
+
+	/**
+	 * Runs the query for the feed and returns results.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return array Associative array with keys 'posts' (list of post objects), 'total' (total number of posts
+	 *               satisfying the query), 'page' (current page), and 'max_pages' (total list of pages).
+	 */
+	protected function get_query_result( $request ) {
+		$query_args = array(
+			'posts_per_page' => get_option( 'posts_per_rss', 10 ),
+			'post_type'      => $this->post_type->name,
+			'post_status'    => 'publish',
+		);
+		if ( isset( $request['page'] ) ) {
+			$query_args['paged'] = $request['page'];
+		}
+
+		$posts_query = new WP_Query();
+		$posts       = $posts_query->query( $query_args );
+		$page        = ! empty( $query_args['paged'] ) ? (int) $query_args['paged'] : 1;
+		$total       = $posts_query->found_posts;
+
+		if ( ! empty( $query_args['paged'] ) && ! $total ) {
+			// Out-of-bounds, run the query again without LIMIT for total count.
+			unset( $query_args['paged'] );
+
+			$count_query = new WP_Query();
+			$count_query->query( $query_args );
+			$total = $count_query->found_posts;
+		}
+
+		$max_pages = ceil( $total / (int) $posts_query->query_vars['posts_per_page'] );
+
+		return array(
+			'posts'     => $posts,
+			'total'     => $total,
+			'page'      => $page,
+			'max_pages' => $max_pages,
+		);
+	}
+
+	/**
+	 * Returns the feed title.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return string Feed title.
+	 */
+	protected function get_feed_title() {
+		if ( 'post' === $this->post_type->name ) {
+			$feed_title = get_bloginfo( 'name' );
+		} else {
+			/* translators: 1: site title, 2: post type plural label */
+			$feed_title = sprintf( _x( '%1$s: %2$s', 'feed title', 'wp-api-json-feed' ), get_bloginfo( 'name' ), $this->post_type->labels->name );
+		}
+
+		/**
+		 * Filters the feed title for the JSON feed of a specific post type.
+		 *
+		 * The dynamic part of the filter `$this->post_type->name` refers to the post type slug for the feed.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param string $feed_title Feed title.
+		 */
+		$feed_title = (string) apply_filters( "wp_api_json_feed_title_{$this->post_type->name}", $feed_title );
+
+		/**
+		 * Filters the feed title for a JSON feed.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param string $feed_title     Feed title.
+		 * @param string $post_type_slug Post type slug for the feed.
+		 */
+		$feed_title = (string) apply_filters( 'wp_api_json_feed_title', $feed_title, $this->post_type->name );
+
+		// Make sure the feed title is never empty.
+		if ( empty( $feed_title ) ) {
+			$feed_title = get_bloginfo( 'name' );
+		}
+
+		return $feed_title;
+	}
+
+	/**
+	 * Returns the feed description.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return string Feed description, or empty string.
+	 */
+	protected function get_feed_description() {
+		if ( 'post' === $this->post_type->name ) {
+			$feed_description = get_bloginfo( 'description' );
+		} else {
+			$feed_description = $this->post_type->description;
+		}
+
+		/**
+		 * Filters the feed description for the JSON feed of a specific post type.
+		 *
+		 * The dynamic part of the filter `$this->post_type->name` refers to the post type slug for the feed.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param string $feed_description Feed description.
+		 */
+		$feed_description = (string) apply_filters( "wp_api_json_feed_description_{$this->post_type->name}", $feed_description );
+
+		/**
+		 * Filters the feed description for a JSON feed.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param string $feed_description Feed description.
+		 * @param string $post_type_slug   Post type slug for the feed.
+		 */
+		$feed_description = (string) apply_filters( 'wp_api_json_feed_description', $feed_description, $this->post_type->name );
+
+		return $feed_description;
+	}
+
+	/**
+	 * Returns the feed author.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return WP_User|null Feed author object, or null.
+	 */
+	protected function get_feed_author() {
+		$show_feed_author = false;
+		if ( 'post' === $this->post_type->name && ! is_multi_author() ) {
+			$show_feed_author = true;
+		}
+
+		/**
+		 * Filters whether to show the author for the entire feed.
+		 *
+		 * If enabled, the user with the admin email address will be displayed.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param bool   $show_feed_author Whether to show the feed author. Default is true on a single author blog,
+		 *                                 false for a multi-author blog.
+		 * @param string $post_type_slug   Post type slug for the feed.
+		 */
+		$show_feed_author = apply_filters( 'wp_api_json_feed_show_feed_author', $show_feed_author, $this->post_type->name );
+
+		if ( $show_feed_author ) {
+			$feed_user = get_user_by( 'email', get_option( 'admin_email' ) );
+			if ( $feed_user && $feed_user->exists() ) {
+				return $feed_user;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the feed icon.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return string|null Feed icon URL, or null.
+	 */
+	protected function get_feed_icon() {
+		if ( ! has_site_icon() ) {
+			return null;
+		}
+
+		return get_site_icon_url( 512 );
+	}
+
+	/**
+	 * Returns the feed favicon.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return string|null Feed favicon URL, or null.
+	 */
+	protected function get_feed_favicon() {
+		if ( ! has_site_icon() ) {
+			return null;
+		}
+
+		return get_site_icon_url( 64 );
+	}
+
+	/**
+	 * Gets the feed URL for the previous page.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param string $feed_url     Base feed URL.
+	 * @param array  $query_result Data from {@see WP_API_JSON_Feed_REST_Controller::get_query_result()}.
+	 * @return string|null Previous feed URL, or null.
+	 */
+	protected function get_feed_prev_url( $feed_url, array $query_result ) {
+		if ( $query_result['page'] <= 1 ) {
+			return null;
+		}
+
+		$prev_page = $query_result['page'] - 1;
+		if ( $prev_page > $query_result['max_pages'] ) {
+			$prev_page = $query_result['max_pages'];
+		}
+
+		return add_query_arg( 'page', $prev_page, $feed_url );
+	}
+
+	/**
+	 * Gets the feed URL for the next page.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param string $feed_url     Base feed URL.
+	 * @param array  $query_result Data from {@see WP_API_JSON_Feed_REST_Controller::get_query_result()}.
+	 * @return string|null Next feed URL, or null.
+	 */
+	protected function get_feed_next_url( $feed_url, array $query_result ) {
+		if ( $query_result['max_pages'] <= $query_result['page'] ) {
+			return null;
+		}
+
+		$next_page = $query_result['page'] + 1;
+
+		return add_query_arg( 'page', $next_page, $feed_url );
+	}
+
+	/**
+	 * Returns whether the feed should be marked as expired.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return bool True if the feed should be marked expired, false otherwise.
+	 */
+	protected function is_feed_expired() {
+		/**
+		 * Filters whether the feed should be displayed as expired.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param bool   $is_feed_expired Whether the feed has expired. Default false.
+		 * @param string $post_type_slug  Post type slug for the feed.
+		 */
+		return (bool) apply_filters( 'wp_api_json_feed_is_expired', false, $this->post_type->name );
 	}
 }

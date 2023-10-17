@@ -41,6 +41,18 @@ class WP_API_JSON_Feed {
 	}
 
 	/**
+	 * Adds the necessary hooks for the plugin to work.
+	 *
+	 * @since 1.0.0
+	 */
+	public function add_hooks() {
+		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ), 10, 0 );
+		add_action( 'wp_head', array( $this, 'render_feed_link_tag' ), 10, 0 );
+
+		add_filter( 'register_post_type_args', array( $this, 'filter_post_type_args' ), 10, 2 );
+	}
+
+	/**
 	 * Registers REST API routes for each post type that supports a JSON feed.
 	 *
 	 * @since 1.0.0
@@ -99,17 +111,5 @@ class WP_API_JSON_Feed {
 		}
 
 		return $args;
-	}
-
-	/**
-	 * Adds the necessary hooks for the plugin to work.
-	 *
-	 * @since 1.0.0
-	 */
-	private function add_hooks() {
-		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ), 10, 0 );
-		add_action( 'wp_head', array( $this, 'render_feed_link_tag' ), 10, 0 );
-
-		add_filter( 'register_post_type_args', array( $this, 'filter_post_type_args' ), 10, 2 );
 	}
 }
