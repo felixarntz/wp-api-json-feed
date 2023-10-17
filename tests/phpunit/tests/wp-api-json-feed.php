@@ -28,6 +28,31 @@ class Tests_WP_API_JSON_Feed extends WP_UnitTestCase {
 		$this->assertInstanceOf( 'WP_API_JSON_Feed', WP_API_JSON_Feed::instance() );
 	}
 
+	public function test_add_hooks() {
+		$expected_actions = array(
+			'rest_api_init',
+			'wp_head',
+		);
+		foreach ( $expected_actions as $action ) {
+			remove_all_actions( $action );
+		}
+
+		$expected_filters = array( 'register_post_type_args' );
+		foreach ( $expected_filters as $filter ) {
+			remove_all_filters( $filter );
+		}
+
+		$plugin = new WP_API_JSON_Feed();
+		$plugin->add_hooks();
+
+		foreach ( $expected_actions as $action ) {
+			$this->assertTrue( has_action( $action ), sprintf( 'Failed asserting that actions for %s were added.', $action ) );
+		}
+		foreach ( $expected_filters as $filter ) {
+			$this->assertTrue( has_filter( $filter ), sprintf( 'Failed asserting that filters for %s were added.', $filter ) );
+		}
+	}
+
 	public function test_register_rest_routes() {
 		register_post_type( 'content', array( 'show_json_feed' => true ) );
 
