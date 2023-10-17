@@ -1,7 +1,9 @@
 <?php
 /**
- * @package WPAPIJSONFeed
- * @subpackage Tests
+ * Tests for WP_API_JSON_Feed_REST_Controller
+ *
+ * @package WPAPIJSONFeed\Tests
+ * @author Felix Arntz <hello@felix-arntz.me>
  */
 
 class Tests_WP_API_JSON_Feed_REST_Controller extends WP_Test_REST_Controller_Testcase {

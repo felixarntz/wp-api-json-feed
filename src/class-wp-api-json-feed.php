@@ -4,7 +4,6 @@
  *
  * @package WPAPIJSONFeed
  * @author Felix Arntz <hello@felix-arntz.me>
- * @since 1.0.0
  */
 
 defined( 'ABSPATH' ) || exit;
