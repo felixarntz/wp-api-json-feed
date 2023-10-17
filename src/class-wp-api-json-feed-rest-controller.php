@@ -6,7 +6,9 @@
  * @author Felix Arntz <hello@felix-arntz.me>
  */
 
-defined( 'ABSPATH' ) || exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * Class to access post type feeds via the REST API.

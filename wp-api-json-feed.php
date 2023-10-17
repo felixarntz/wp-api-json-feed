@@ -20,7 +20,9 @@
  * Tags: json feed, feed, rest api
  */
 
-defined( 'ABSPATH' ) || exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * Checks if the minimum WordPress version is installed, and if so, initializes the plugin.

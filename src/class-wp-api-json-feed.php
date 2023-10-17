@@ -6,7 +6,9 @@
  * @author Felix Arntz <hello@felix-arntz.me>
  */
 
-defined( 'ABSPATH' ) || exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * Main plugin class.
