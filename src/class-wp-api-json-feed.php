@@ -47,8 +47,8 @@ class WP_API_JSON_Feed {
 	 * @since 1.0.0
 	 */
 	public function add_hooks() {
-		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ), 10, 0 );
-		add_action( 'wp_head', array( $this, 'render_feed_link_tag' ), 10, 0 );
+		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
+		add_action( 'wp_head', array( $this, 'render_current_feed_link_tag' ) );
 
 		add_filter( 'register_post_type_args', array( $this, 'filter_post_type_args' ), 10, 2 );
 	}
@@ -65,6 +65,40 @@ class WP_API_JSON_Feed {
 			$controller = new WP_API_JSON_Feed_REST_Controller( $post_type );
 			$controller->register_routes();
 		}
+	}
+
+	/**
+	 * Renders a link tag for the current JSON feed to display in the <head>.
+	 *
+	 * @since 1.1.0
+	 */
+	public function render_current_feed_link_tag() {
+		$post_type = $this->get_current_post_type();
+
+		$this->render_feed_link_tag( $post_type );
+	}
+
+	/**
+	 * Returns the current post type slug, or 'post' as a fallback.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return string Current post type slug based on the current WP_Query, or 'post' if none could be determined.
+	 */
+	public function get_current_post_type() {
+		$post_type = get_post_type();
+		if ( ! $post_type ) {
+			$queried_object = get_queried_object();
+			if ( $queried_object instanceof WP_Post_Type ) {
+				$post_type = $queried_object->name;
+			} elseif ( $queried_object instanceof WP_Post ) {
+				$post_type = $queried_object->post_type;
+			} else {
+				$post_type = 'post';
+			}
+		}
+
+		return $post_type;
 	}
 
 	/**

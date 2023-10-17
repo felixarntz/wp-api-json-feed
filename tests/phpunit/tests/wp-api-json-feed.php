@@ -65,14 +65,79 @@ class Tests_WP_API_JSON_Feed extends WP_UnitTestCase {
 		$this->assertArrayHasKey( '/feed/v1/content', $routes );
 	}
 
+	public function test_render_current_feed_link_tag() {
+		$plugin = new WP_API_JSON_Feed();
+
+		ob_start();
+		$plugin->render_current_feed_link_tag();
+		$output = ob_get_clean();
+
+		// The expected output should be the same as when calling `render_feed_link_tag()` with parameter 'post'.
+		ob_start();
+		$plugin->render_feed_link_tag( 'post' );
+		$expected = ob_get_clean();
+
+		$this->assertSame( $expected, $output );
+	}
+
+	/**
+	 * @dataProvider data_get_current_post_type
+	 */
+	public function test_get_current_post_type( $set_up, $expected ) {
+		$plugin = new WP_API_JSON_Feed();
+
+		$set_up();
+
+		$this->assertSame( $expected, $plugin->get_current_post_type() );
+	}
+
+	public function data_get_current_post_type() {
+		return array(
+			'based on global post'       => array(
+				function () {
+					$post            = new WP_Post( new stdClass() );
+					$post->post_type = 'my_cpt';
+					$post->filter    = 'raw'; // Prevent the filter method from unsetting the test data.
+					$GLOBALS['post'] = $post;
+				},
+				'my_cpt',
+			),
+			'based on queried post type' => array(
+				function () {
+					$query                          = new WP_Query();
+					$query->is_post_type_archive    = true;
+					$query->query_vars['post_type'] = 'page';
+					$GLOBALS['wp_query']            = $query;
+				},
+				'page',
+			),
+			'based on queried post'      => array(
+				function () {
+					$query                  = new WP_Query();
+					$query->is_singular     = true;
+					$query->post            = new WP_Post( new stdClass() );
+					$query->post->post_type = 'product';
+					$GLOBALS['wp_query']    = $query;
+				},
+				'product',
+			),
+			'based on fallback'          => array(
+				function () {
+					$GLOBALS['wp_query'] = new WP_Query();
+					unset( $GLOBALS['post'] );
+				},
+				'post',
+			),
+		);
+	}
+
 	public function test_render_feed_link_tag() {
 		register_post_type( 'content', array( 'label' => 'Content', 'show_json_feed' => true ) );
 
-		ob_start();
-
 		$plugin = new WP_API_JSON_Feed();
-		$plugin->render_feed_link_tag( 'content' );
 
+		ob_start();
+		$plugin->render_feed_link_tag( 'content' );
 		$output = ob_get_clean();
 
 		_unregister_post_type( 'content' );
@@ -84,11 +149,10 @@ class Tests_WP_API_JSON_Feed extends WP_UnitTestCase {
 	public function test_render_feed_link_tag_for_post_type_without_feed() {
 		register_post_type( 'content', array() );
 
-		ob_start();
-
 		$plugin = new WP_API_JSON_Feed();
-		$plugin->render_feed_link_tag( 'content' );
 
+		ob_start();
+		$plugin->render_feed_link_tag( 'content' );
 		$output = ob_get_clean();
 
 		_unregister_post_type( 'content' );
@@ -97,11 +161,10 @@ class Tests_WP_API_JSON_Feed extends WP_UnitTestCase {
 	}
 
 	public function test_render_feed_link_tag_for_invalid_post_type() {
-		ob_start();
-
 		$plugin = new WP_API_JSON_Feed();
-		$plugin->render_feed_link_tag( 'content' );
 
+		ob_start();
+		$plugin->render_feed_link_tag( 'content' );
 		$output = ob_get_clean();
 
 		$this->assertEmpty( $output );
