@@ -8,19 +8,18 @@
 
 class Tests_WP_API_JSON_Feed extends WP_UnitTestCase {
 	public function set_up() {
+		global $wp_rest_server;
+
 		parent::set_up();
 
-		$GLOBALS['wp_rest_server'] = null;
-
-		add_filter( 'wp_rest_server_class', array( $this, 'filter_wp_rest_server_class' ) );
-
-		$this->server = rest_get_server();
-
-		remove_filter( 'wp_rest_server_class', array( $this, 'filter_wp_rest_server_class' ) );
+		$wp_rest_server = new Spy_REST_Server();
+		do_action( 'rest_api_init', $wp_rest_server );
 	}
 
 	public function tear_down() {
-		$GLOBALS['wp_rest_server'] = null;
+		global $wp_rest_server;
+
+		$wp_rest_server = null;
 
 		parent::tear_down();
 	}
@@ -37,7 +36,7 @@ class Tests_WP_API_JSON_Feed extends WP_UnitTestCase {
 
 		_unregister_post_type( 'content' );
 
-		$routes = $this->server->get_routes();
+		$routes = rest_get_server()->get_routes();
 		$this->assertArrayHasKey( '/feed/v1/content', $routes );
 	}
 
@@ -114,9 +113,5 @@ class Tests_WP_API_JSON_Feed extends WP_UnitTestCase {
 		);
 
 		$this->assertEqualSets( $expected, $plugin->filter_post_type_args( $expected, 'content' ) );
-	}
-
-	public function filter_wp_rest_server_class() {
-		return 'Spy_REST_Server';
 	}
 }

@@ -6,15 +6,32 @@
  * @author Felix Arntz <hello@felix-arntz.me>
  */
 
-class Tests_WP_API_JSON_Feed_REST_Controller extends WP_Test_REST_Controller_Testcase {
+class Tests_WP_API_JSON_Feed_REST_Controller extends WP_Test_REST_TestCase {
+	public function set_up() {
+		global $wp_rest_server;
+
+		parent::set_up();
+
+		$wp_rest_server = new Spy_REST_Server();
+		do_action( 'rest_api_init', $wp_rest_server );
+	}
+
+	public function tear_down() {
+		global $wp_rest_server;
+
+		$wp_rest_server = null;
+
+		parent::tear_down();
+	}
+
 	public function test_register_routes() {
-		$routes = $this->server->get_routes();
+		$routes = rest_get_server()->get_routes();
 		$this->assertArrayHasKey( '/feed/v1/posts', $routes );
 	}
 
 	public function test_get_item() {
 		$request = new WP_REST_Request( 'GET', '/feed/v1/posts' );
-		$response = $this->server->dispatch( $request );
+		$response = rest_get_server()->dispatch( $request );
 		$data = $response->get_data();
 
 		$this->assertArrayHasKey( 'version', $data );
@@ -26,7 +43,7 @@ class Tests_WP_API_JSON_Feed_REST_Controller extends WP_Test_REST_Controller_Tes
 
 	public function test_get_item_correct_json_feed_version() {
 		$request = new WP_REST_Request( 'GET', '/feed/v1/posts' );
-		$response = $this->server->dispatch( $request );
+		$response = rest_get_server()->dispatch( $request );
 		$data = $response->get_data();
 
 		$this->assertArrayHasKey( 'version', $data );
@@ -39,7 +56,7 @@ class Tests_WP_API_JSON_Feed_REST_Controller extends WP_Test_REST_Controller_Tes
 		$counts = wp_count_posts();
 
 		$request = new WP_REST_Request( 'GET', '/feed/v1/posts' );
-		$response = $this->server->dispatch( $request );
+		$response = rest_get_server()->dispatch( $request );
 		$data = $response->get_data();
 
 		$this->assertArrayHasKey( 'items', $data );
@@ -52,7 +69,7 @@ class Tests_WP_API_JSON_Feed_REST_Controller extends WP_Test_REST_Controller_Tes
 		add_filter( 'pre_option_posts_per_rss', array( $this, 'filter_posts_per_rss' ) );
 
 		$request = new WP_REST_Request( 'GET', '/feed/v1/posts' );
-		$response = $this->server->dispatch( $request );
+		$response = rest_get_server()->dispatch( $request );
 		$data = $response->get_data();
 
 		remove_filter( 'pre_option_posts_per_rss', array( $this, 'filter_posts_per_rss' ) );
@@ -74,7 +91,7 @@ class Tests_WP_API_JSON_Feed_REST_Controller extends WP_Test_REST_Controller_Tes
 
 		$request = new WP_REST_Request( 'GET', '/feed/v1/posts' );
 		$request->set_param( 'page', $page );
-		$response = $this->server->dispatch( $request );
+		$response = rest_get_server()->dispatch( $request );
 		$data = $response->get_data();
 
 		remove_filter( 'pre_option_posts_per_rss', array( $this, 'filter_posts_per_rss' ) );
@@ -88,7 +105,7 @@ class Tests_WP_API_JSON_Feed_REST_Controller extends WP_Test_REST_Controller_Tes
 
 		$request = new WP_REST_Request( 'GET', '/feed/v1/posts' );
 		$request->set_param( 'page', 100 );
-		$response = $this->server->dispatch( $request );
+		$response = rest_get_server()->dispatch( $request );
 		$this->assertErrorResponse( 'rest_feed_invalid_page_number', $response, 400 );
 	}
 
@@ -174,25 +191,5 @@ class Tests_WP_API_JSON_Feed_REST_Controller extends WP_Test_REST_Controller_Tes
 
 	public function filter_posts_per_rss() {
 		return 3;
-	}
-
-	public function test_context_param() {
-		/** Feeds don't support a context param */
-	}
-
-	public function test_get_items() {
-		/** Only a single feed can be queried */
-	}
-
-	public function test_create_item() {
-		/** Feeds can't be created */
-	}
-
-	public function test_update_item() {
-		/** Feeds can't be updated */
-	}
-
-	public function test_delete_item() {
-		/** Feeds can't be deleted */
 	}
 }
