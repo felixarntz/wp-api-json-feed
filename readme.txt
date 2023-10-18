@@ -30,6 +30,8 @@ Implements a JSON feed following the official JSON feed specification by means o
 1. Upload the entire `wp-api-json-feed` folder to the `/wp-content/plugins/` directory or download it through the WordPress backend.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 
+= Administration =
+
 Once the plugin is activated, it will work out of the box and provide a JSON feed for posts. If you want to provide JSON feeds for further post types, you need to specify an additional argument `show_json_feed` when registering the post type, and set it to a boolean `true`. You may also specify a `json_feed_base` argument being a string identifier that should be used in the feed URL. If no string identifier is provided, the post type slug will be used.
 
 == Frequently Asked Questions ==
@@ -40,11 +42,11 @@ If you want to provide a JSON feed for your custom post type, you need to specif
 
 = Where should I submit my support request? =
 
-I preferably take support requests as [issues on Github](https://github.com/felixarntz/wp-api-json-feed/issues), so I would appreciate if you created an issue for your request there. However, if you don't have an account there and do not want to sign up, you can of course use the [wordpress.org support forums](https://wordpress.org/support/plugin/wp-api-json-feed) as well.
+For regular support requests, please use the [wordpress.org support forums](https://wordpress.org/support/plugin/wp-api-json-feed). If you have a technical issue with the plugin where you already have more insight on how to fix it, you can also [open an issue on GitHub instead](https://github.com/felixarntz/wp-api-json-feed/issues).
 
 = How can I contribute to the plugin? =
 
-If you're a developer and you have some ideas to improve the plugin or to solve a bug, feel free to raise an issue or submit a pull request in the [Github repository for the plugin](https://github.com/felixarntz/wp-api-json-feed).
+If you have ideas to improve the plugin or to solve a bug, feel free to raise an issue or submit a pull request in the [GitHub repository for the plugin](https://github.com/felixarntz/wp-api-json-feed). Please stick to the [contributing guidelines](https://github.com/felixarntz/wp-api-json-feed/blob/main/CONTRIBUTING.md).
 
 You can also contribute to the plugin by translating it. Simply visit [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/wp-api-json-feed) to get started.
 

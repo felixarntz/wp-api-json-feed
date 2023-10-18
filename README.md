@@ -1,8 +1,5 @@
 [![WordPress plugin](https://img.shields.io/wordpress/plugin/v/wp-api-json-feed.svg?maxAge=2592000)](https://wordpress.org/plugins/wp-api-json-feed/)
 [![WordPress](https://img.shields.io/wordpress/v/wp-api-json-feed.svg?maxAge=2592000)](https://wordpress.org/plugins/wp-api-json-feed/)
-[![Build Status](https://api.travis-ci.org/felixarntz/wp-api-json-feed.png?branch=master)](https://travis-ci.org/felixarntz/wp-api-json-feed)
-[![Code Climate](https://codeclimate.com/github/felixarntz/wp-api-json-feed/badges/gpa.svg)](https://codeclimate.com/github/felixarntz/wp-api-json-feed)
-[![Test Coverage](https://codeclimate.com/github/felixarntz/wp-api-json-feed/badges/coverage.svg)](https://codeclimate.com/github/felixarntz/wp-api-json-feed/coverage)
 [![Latest Stable Version](https://poser.pugx.org/felixarntz/wp-api-json-feed/version)](https://packagist.org/packages/felixarntz/wp-api-json-feed)
 [![License](https://poser.pugx.org/felixarntz/wp-api-json-feed/license)](https://packagist.org/packages/felixarntz/wp-api-json-feed)
 
@@ -19,14 +16,14 @@ Implements a JSON feed following the official JSON feed specification by means o
 * Uses a proper REST API controller including schema for the endpoints.
 * Contains several filters to modify the feed responses as necessary.
 
-## Installation and Setup
+## Installation and usage
 
-You can download the latest version from the [WordPress plugin repository](http://wordpress.org/plugins/wp-api-json-feed/) or directly from your WordPress backend.
+You can download the latest version from the [WordPress plugin repository](https://wordpress.org/plugins/wp-api-json-feed/).
 
-Once the plugin is activated, it will work out of the box and provide a JSON feed for posts. If you want to provide JSON feeds for further post types, you need to specify an additional argument `show_json_feed` when registering the post type, and set it to a boolean `true`. You may also specify a `json_feed_base` argument being a string identifier that should be used in the feed URL. If no string identifier is provided, the post type slug will be used.
+Please see the [plugin repository instructions](https://wordpress.org/plugins/wp-api-json-feed/#installation) for detailed information on installation and usage.
 
-## Contributions and Bugs
+## Contributions
 
-If you have ideas on how to improve the plugin or if you discover a bug, I would appreciate if you shared them with me, right here on Github. In either case, please open a new issue [here](https://github.com/felixarntz/wp-api-json-feed/issues/new)!
+If you have ideas to improve the plugin or to solve a bug, feel free to raise an issue or submit a pull request right here on GitHub. Please refer to the [contributing guidelines](https://github.com/felixarntz/wp-api-json-feed/blob/main/CONTRIBUTING.md) to learn more and get started.
 
 You can also contribute to the plugin by translating it. Simply visit [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/wp-api-json-feed) to get started.
