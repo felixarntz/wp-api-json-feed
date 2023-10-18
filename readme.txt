@@ -6,9 +6,9 @@ Author:            Felix Arntz
 Author URI:        https://felix-arntz.me
 Contributors:      flixos90
 Donate link:       https://felix-arntz.me/wordpress-plugins/
-Requires at least: 4.7
-Tested up to:      4.8
-Requires PHP:      5.3
+Requires at least: 5.2
+Tested up to:      6.4
+Requires PHP:      5.6
 Stable tag:        1.0.0
 License:           GNU General Public License v3 (or later)
 License URI:       https://www.gnu.org/licenses/gpl-3.0.html

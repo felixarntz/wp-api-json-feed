@@ -94,7 +94,7 @@ class Tests_WP_API_JSON_Feed extends WP_UnitTestCase {
 	public function data_get_current_post_type() {
 		return array(
 			'based on global post'       => array(
-				function () {
+				static function () {
 					$post            = new WP_Post( new stdClass() );
 					$post->post_type = 'my_cpt';
 					$post->filter    = 'raw'; // Prevent the filter method from unsetting the test data.
@@ -103,7 +103,7 @@ class Tests_WP_API_JSON_Feed extends WP_UnitTestCase {
 				'my_cpt',
 			),
 			'based on queried post type' => array(
-				function () {
+				static function () {
 					$query                          = new WP_Query();
 					$query->is_post_type_archive    = true;
 					$query->query_vars['post_type'] = 'page';
@@ -112,7 +112,7 @@ class Tests_WP_API_JSON_Feed extends WP_UnitTestCase {
 				'page',
 			),
 			'based on queried post'      => array(
-				function () {
+				static function () {
 					$query                  = new WP_Query();
 					$query->is_singular     = true;
 					$query->post            = new WP_Post( new stdClass() );
@@ -122,7 +122,7 @@ class Tests_WP_API_JSON_Feed extends WP_UnitTestCase {
 				'product',
 			),
 			'based on fallback'          => array(
-				function () {
+				static function () {
 					$GLOBALS['wp_query'] = new WP_Query();
 					unset( $GLOBALS['post'] );
 				},
