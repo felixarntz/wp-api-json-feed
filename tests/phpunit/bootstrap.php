@@ -20,9 +20,6 @@ if ( false !== getenv( 'WP_TESTS_DIR' ) ) {
 	$_test_root = '/tmp/wordpress-tests-lib';
 }
 
-var_dump( TESTS_PLUGIN_DIR );
-var_dump( basename( TESTS_PLUGIN_DIR ) . '/wp-api-json-feed.php' );
-
 // Force plugin to be active.
 $GLOBALS['wp_tests_options'] = array(
 	'active_plugins' => array( basename( TESTS_PLUGIN_DIR ) . '/wp-api-json-feed.php' ),
@@ -30,3 +27,6 @@ $GLOBALS['wp_tests_options'] = array(
 
 // Start up the WP testing environment.
 require $_test_root . '/includes/bootstrap.php';
+
+require_once ABSPATH . '/wp-admin/includes/plugin.php';
+var_dump( is_plugin_active( basename( TESTS_PLUGIN_DIR ) . '/wp-api-json-feed.php' ) );
