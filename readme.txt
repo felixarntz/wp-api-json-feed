@@ -6,7 +6,7 @@ Author:            Felix Arntz
 Author URI:        https://felix-arntz.me
 Contributors:      flixos90
 Donate link:       https://felix-arntz.me/wordpress-plugins/
-Requires at least: 5.2
+Requires at least: 5.4
 Tested up to:      6.4
 Requires PHP:      5.6
 Stable tag:        1.0.0

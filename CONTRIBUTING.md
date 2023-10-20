@@ -12,7 +12,7 @@ The WP-API JSON Feed plugin is [licensed under the GPLv3 (or later)](/license.tx
 
 In general, all code must follow the [WordPress Coding Standards and best practices](https://developer.wordpress.org/coding-standards/). All code must furthermore satisfy the following minimum requirements (as of WP-API JSON Feed 1.1.0):
 
-- **WordPress**: The plugin's minimum required WordPress version is 5.2.
+- **WordPress**: The plugin's minimum required WordPress version is 5.4.
 - **PHP**: The plugin's minimum required PHP version is 5.6.
 
 ## Getting started with code contributions
