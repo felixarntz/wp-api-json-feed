@@ -47,7 +47,7 @@ class Tests_WP_API_JSON_Feed_REST_Controller extends WP_Test_REST_TestCase {
 		$data = $response->get_data();
 
 		$this->assertArrayHasKey( 'version', $data );
-		$this->assertSame( 'https://jsonfeed.org/version/1', $data['version'] );
+		$this->assertSame( 'https://jsonfeed.org/version/1.1', $data['version'] );
 	}
 
 	public function test_get_item_count_posts() {
@@ -113,7 +113,7 @@ class Tests_WP_API_JSON_Feed_REST_Controller extends WP_Test_REST_TestCase {
 		$controller = new WP_API_JSON_Feed_REST_Controller( get_post_type_object( 'post' ) );
 
 		$feed = array(
-			'version'       => 'https://jsonfeed.org/version/1',
+			'version'       => 'https://jsonfeed.org/version/1.1',
 			'title'         => 'My Feed',
 			'home_page_url' => 'https://www.example.com',
 			'feed_url'      => 'https://www.example.com/wp-json/feed/v1/posts',
@@ -152,7 +152,8 @@ class Tests_WP_API_JSON_Feed_REST_Controller extends WP_Test_REST_TestCase {
 			'next_url',
 			'icon',
 			'favicon',
-			'author',
+			'authors',
+			'language',
 			'expired',
 			'hubs',
 			'items',
@@ -175,7 +176,8 @@ class Tests_WP_API_JSON_Feed_REST_Controller extends WP_Test_REST_TestCase {
 			'banner_image',
 			'date_published',
 			'date_modified',
-			'author',
+			'authors',
+			'language',
 			'tags',
 			'attachments',
 		), array_keys( $schema['properties']['items']['items']['properties'] ) );

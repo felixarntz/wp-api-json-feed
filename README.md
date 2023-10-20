@@ -9,7 +9,7 @@ Implements a JSON feed following the official JSON feed specification by means o
 
 ## Features
 
-* Adds JSON feeds following the official [version 1 spec](https://jsonfeed.org/version/1).
+* Adds JSON feeds following the official [version 1.1 spec](https://jsonfeed.org/version/1.1).
 * Places a link tag to the posts feed inside the HTML head tag.
 * Adds a new namespace `feed/v1` to the REST API.
 * Allows adding individual endpoints per post type, simply by specifying an additional argument when registering the post type. By default a feed is only added for regular posts (posts of the `post` post type).

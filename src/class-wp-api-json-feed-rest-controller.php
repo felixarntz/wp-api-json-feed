@@ -101,7 +101,7 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 
 		// Required fields.
 		$feed = array(
-			'version'       => 'https://jsonfeed.org/version/1',
+			'version'       => 'https://jsonfeed.org/version/1.1',
 			'home_page_url' => get_post_type_archive_link( $this->post_type->name ),
 			'feed_url'      => rest_url( sprintf( '%s/%s', $this->namespace, $this->rest_base ) ),
 			'items'         => $query_result['posts'],
@@ -114,9 +114,10 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 		// Optional fields.
 		$optional = array(
 			'description' => $this->get_feed_description(),
-			'author'      => $this->get_feed_author(),
 			'icon'        => $this->get_feed_icon(),
 			'favicon'     => $this->get_feed_favicon(),
+			'authors'     => $this->get_feed_authors(),
+			'language'    => $this->get_feed_language(),
 			'prev_url'    => $this->get_feed_prev_url( $feed['feed_url'], $query_result ),
 			'next_url'    => $this->get_feed_next_url( $feed['feed_url'], $query_result ),
 			'expired'     => $this->is_feed_expired(),
@@ -157,8 +158,11 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 				continue;
 			}
 
-			if ( 'author' === $property ) {
-				$data['author'] = $this->get_author_data( $feed['author'] );
+			if ( 'authors' === $property ) {
+				$data['authors'] = array_map(
+					array( $this, 'get_author_data' ),
+					$feed['authors']
+				);
 				continue;
 			}
 
@@ -210,7 +214,7 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 	 */
 	public function get_item_schema() {
 		$schema = array(
-			'$schema'    => 'http://json-schema.org/schema#',
+			'$schema'    => 'https://json-schema.org/schema#',
 			'title'      => "{$this->post_type->name}_feed",
 			'type'       => 'object',
 			'properties' => $this->get_schema_properties(),
@@ -297,10 +301,17 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 				'type'        => 'string',
 				'format'      => 'uri',
 			),
-			'author'        => array(
-				'description' => __( 'The feed author.', 'wp-api-json-feed' ),
+			'authors'       => array(
+				'description' => __( 'The feed authors.', 'wp-api-json-feed' ),
 				'type'        => 'object',
-				'properties'  => $this->get_author_schema_properties(),
+				'items'       => array(
+					'type'       => 'object',
+					'properties' => $this->get_author_schema_properties(),
+				),
+			),
+			'language'      => array(
+				'description' => __( 'Primary language for the feed in the format specified in RFC 5646.', 'wp-api-json-feed' ),
+				'type'        => 'string',
 			),
 			'expired'       => array(
 				'description' => __( 'Whether or not the feed is finished.', 'wp-api-json-feed' ),
@@ -405,10 +416,17 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 				'type'        => 'string',
 				'format'      => 'date-time',
 			),
-			'author'         => array(
-				'description' => __( 'Author of the item.', 'wp-api-json-feed' ),
+			'authors'        => array(
+				'description' => __( 'Authors of the item.', 'wp-api-json-feed' ),
 				'type'        => 'object',
-				'properties'  => $this->get_author_schema_properties(),
+				'items'       => array(
+					'type'       => 'object',
+					'properties' => $this->get_author_schema_properties(),
+				),
+			),
+			'language'       => array(
+				'description' => __( 'Language for the item in the format specified in RFC 5646.', 'wp-api-json-feed' ),
+				'type'        => 'string',
 			),
 			'tags'           => array(
 				'description' => __( 'Plain text values the item is tagged with.', 'wp-api-json-feed' ),
@@ -525,7 +543,7 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 		if ( post_type_supports( $post->post_type, 'author' ) && ! empty( $post->post_author ) ) {
 			$post_author = get_userdata( $post->post_author );
 			if ( $post_author && $post_author->exists() ) {
-				$post_data['author'] = $this->get_author_data( $post_author );
+				$post_data['authors'] = array( $this->get_author_data( $post_author ) );
 			}
 		}
 
@@ -729,42 +747,6 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * Returns the feed author.
-	 *
-	 * @since 1.1.0
-	 *
-	 * @return WP_User|null Feed author object, or null.
-	 */
-	protected function get_feed_author() {
-		$show_feed_author = false;
-		if ( 'post' === $this->post_type->name && ! is_multi_author() ) {
-			$show_feed_author = true;
-		}
-
-		/**
-		 * Filters whether to show the author for the entire feed.
-		 *
-		 * If enabled, the user with the admin email address will be displayed.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param bool   $show_feed_author Whether to show the feed author. Default is true on a single author blog,
-		 *                                 false for a multi-author blog.
-		 * @param string $post_type_slug   Post type slug for the feed.
-		 */
-		$show_feed_author = apply_filters( 'wp_api_json_feed_show_feed_author', $show_feed_author, $this->post_type->name );
-
-		if ( $show_feed_author ) {
-			$feed_user = get_user_by( 'email', get_option( 'admin_email' ) );
-			if ( $feed_user && $feed_user->exists() ) {
-				return $feed_user;
-			}
-		}
-
-		return null;
-	}
-
-	/**
 	 * Returns the feed icon.
 	 *
 	 * @since 1.1.0
@@ -792,6 +774,53 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 		}
 
 		return get_site_icon_url( 64 );
+	}
+
+	/**
+	 * Returns the feed authors.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return WP_User[] WordPress user objects for the feed, or empty array.
+	 */
+	protected function get_feed_authors() {
+		$show_feed_author = false;
+		if ( 'post' === $this->post_type->name && ! is_multi_author() ) {
+			$show_feed_author = true;
+		}
+
+		/**
+		 * Filters whether to show the author for the entire feed.
+		 *
+		 * If enabled, the user with the admin email address will be displayed.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param bool   $show_feed_author Whether to show the feed author. Default is true on a single author blog,
+		 *                                 false for a multi-author blog.
+		 * @param string $post_type_slug   Post type slug for the feed.
+		 */
+		$show_feed_author = apply_filters( 'wp_api_json_feed_show_feed_author', $show_feed_author, $this->post_type->name );
+
+		if ( $show_feed_author ) {
+			$feed_user = get_user_by( 'email', get_option( 'admin_email' ) );
+			if ( $feed_user && $feed_user->exists() ) {
+				return array( $feed_user );
+			}
+		}
+
+		return array();
+	}
+
+	/**
+	 * Returns the feed language.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return string Feed language.
+	 */
+	protected function get_feed_language() {
+		return get_bloginfo( 'language' );
 	}
 
 	/**
