@@ -79,10 +79,6 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
 
-      - name: Set correct wp-phpunit version
-        run: composer require wp-phpunit/wp-phpunit:${{ matrix.wordpress }} --dev --no-update
-        if: startsWith(matrix.wordpress, '5.')
-
       - name: Setup Node.js (.nvmrc)
         uses: actions/setup-node@v3
         with:

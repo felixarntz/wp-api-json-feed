@@ -27,6 +27,3 @@ $GLOBALS['wp_tests_options'] = array(
 
 // Start up the WP testing environment.
 require $_test_root . '/includes/bootstrap.php';
-
-require_once ABSPATH . '/wp-admin/includes/plugin.php';
-var_dump( is_plugin_active( basename( TESTS_PLUGIN_DIR ) . '/wp-api-json-feed.php' ) );
