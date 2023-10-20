@@ -54,6 +54,11 @@ class Tests_WP_API_JSON_Feed extends WP_UnitTestCase {
 	}
 
 	public function test_register_rest_routes() {
+		// For some reason, in older WordPress versions this won't have fired yet.
+		if ( ! did_action( 'rest_api_init' ) ) {
+			do_action( 'rest_api_init', rest_get_server() );
+		}
+
 		register_post_type( 'content', array( 'show_json_feed' => true ) );
 
 		$plugin = new WP_API_JSON_Feed();
