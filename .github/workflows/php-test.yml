@@ -80,7 +80,7 @@ jobs:
           php-version: ${{ matrix.php }}
 
       - name: Set correct wp-phpunit version
-        run: npm run wp-env run tests-cli --env-cwd=wp-content/plugins/$(basename $(pwd)) composer require wp-phpunit/wp-phpunit:${{ matrix.wordpress }} --dev --no-update
+        run: composer require wp-phpunit/wp-phpunit:${{ matrix.wordpress }} --dev --no-update
         if: startsWith(matrix.wordpress, '5.')
 
       - name: Setup Node.js (.nvmrc)
