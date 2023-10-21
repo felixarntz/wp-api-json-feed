@@ -537,6 +537,53 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 	 * @return array Post data for a feed.
 	 */
 	protected function prepare_post_for_feed( $post, $schema, $request ) {
+		$post_data = $this->get_post_data_for_feed( $post );
+
+		if ( ! $this->skip_backward_compatibility() ) {
+			if ( isset( $post_data['authors'] ) ) {
+				$post_data['author'] = $post_data['authors'][0];
+			}
+		}
+
+		/**
+		 * Filters the prepared post data for the JSON feed of a specific post type.
+		 *
+		 * The dynamic part of the filter `$this->post_type->name` refers to the post type slug for the feed.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array           $post_data Prepared post data.
+		 * @param WP_Post         $post      Post object.
+		 * @param array           $schema    Schema data for a post in a feed.
+		 * @param WP_REST_Request $request   Request object.
+		 */
+		$post_data = apply_filters( "wp_api_json_feed_post_data_{$this->post_type->name}", $post_data, $post, $schema, $request );
+
+		/**
+		 * Filters the prepared post data for a JSON feed.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array           $post_data      Prepared post data.
+		 * @param WP_Post         $post           Post object.
+		 * @param array           $schema         Schema data for a post in a feed.
+		 * @param WP_REST_Request $request        Request object.
+		 * @param string          $post_type_slug Post type slug for the feed.
+		 */
+		$post_data = apply_filters( 'wp_api_json_feed_post_data', $post_data, $post, $schema, $request, $this->post_type->name );
+
+		return $post_data;
+	}
+
+	/**
+	 * Gets post data for the feed.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param WP_Post $post Post object.
+	 * @return array Post data for a feed item.
+	 */
+	protected function get_post_data_for_feed( $post ) {
 		$GLOBALS['post'] = $post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		setup_postdata( $post );
@@ -580,39 +627,6 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 				}
 			}
 		}
-
-		if ( ! $this->skip_backward_compatibility() ) {
-			if ( isset( $post_data['authors'] ) ) {
-				$post_data['author'] = $post_data['authors'][0];
-			}
-		}
-
-		/**
-		 * Filters the prepared post data for the JSON feed of a specific post type.
-		 *
-		 * The dynamic part of the filter `$this->post_type->name` refers to the post type slug for the feed.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param array           $post_data Prepared post data.
-		 * @param WP_Post         $post      Post object.
-		 * @param array           $schema    Schema data for a post in a feed.
-		 * @param WP_REST_Request $request   Request object.
-		 */
-		$post_data = apply_filters( "wp_api_json_feed_post_data_{$this->post_type->name}", $post_data, $post, $schema, $request );
-
-		/**
-		 * Filters the prepared post data for a JSON feed.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @param array           $post_data      Prepared post data.
-		 * @param WP_Post         $post           Post object.
-		 * @param array           $schema         Schema data for a post in a feed.
-		 * @param WP_REST_Request $request        Request object.
-		 * @param string          $post_type_slug Post type slug for the feed.
-		 */
-		$post_data = apply_filters( 'wp_api_json_feed_post_data', $post_data, $post, $schema, $request, $this->post_type->name );
 
 		return $post_data;
 	}

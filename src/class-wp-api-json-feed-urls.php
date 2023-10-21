@@ -64,16 +64,16 @@ class WP_API_JSON_Feed_URLs {
 	 *
 	 * @since 1.1.0
 	 *
-	 * @param string $ns   URL namespace.
-	 * @param string $base URL base.
+	 * @param string $rest_namespace URL namespace.
+	 * @param string $rest_base      URL base.
 	 * @return string JSON feed URL for the given URL namespace and base.
 	 */
-	public function get_feed_url( $ns, $base ) {
+	public function get_feed_url( $rest_namespace, $rest_base ) {
 		return rest_url(
 			sprintf(
 				'%1$s/%2$s',
-				trim( $ns, '/' ),
-				trim( $base, '/' )
+				trim( $rest_namespace, '/' ),
+				trim( $rest_base, '/' )
 			)
 		);
 	}
