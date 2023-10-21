@@ -19,7 +19,7 @@
 	<arg name="extensions" value="php"/>
 
 	<file>./wp-api-json-feed.php</file>
-	<file>./src</file>
+	<file>./inc</file>
 	<file>./tests</file>
 
 	<!--

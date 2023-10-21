@@ -35,8 +35,8 @@ function wp_api_json_feed_load() {
 		return;
 	}
 
-	require_once plugin_dir_path( __FILE__ ) . 'src/class-wp-api-json-feed.php';
-	require_once plugin_dir_path( __FILE__ ) . 'src/class-wp-api-json-feed-urls.php';
+	require_once plugin_dir_path( __FILE__ ) . 'inc/class-wp-api-json-feed.php';
+	require_once plugin_dir_path( __FILE__ ) . 'inc/class-wp-api-json-feed-urls.php';
 
 	WP_API_JSON_Feed::instance();
 }

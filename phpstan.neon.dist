@@ -4,4 +4,4 @@ parameters:
 	level: 4
 	paths:
 		- wp-api-json-feed.php
-		- src/
+		- inc/
