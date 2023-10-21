@@ -30,8 +30,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 function wp_api_json_feed_load() {
-	load_plugin_textdomain( 'wp-api-json-feed' );
-
 	if ( version_compare( get_bloginfo( 'version' ), '5.4', '<' ) ) {
 		add_action( 'admin_notices', 'wp_api_json_feed_show_version_error_notice', 10, 0 );
 		return;
