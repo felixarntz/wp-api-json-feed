@@ -110,7 +110,10 @@ class Tests_WP_API_JSON_Feed_REST_Controller extends WP_Test_REST_TestCase {
 	}
 
 	public function test_prepare_item() {
-		$controller = new WP_API_JSON_Feed_REST_Controller( get_post_type_object( 'post' ) );
+		$controller = new WP_API_JSON_Feed_REST_Controller(
+			new WP_API_JSON_Feed_URLs(),
+			get_post_type_object( 'post' )
+		);
 
 		$feed = array(
 			'version'       => 'https://jsonfeed.org/version/1.1',
@@ -137,7 +140,10 @@ class Tests_WP_API_JSON_Feed_REST_Controller extends WP_Test_REST_TestCase {
 	}
 
 	public function test_get_item_schema() {
-		$controller = new WP_API_JSON_Feed_REST_Controller( get_post_type_object( 'post' ) );
+		$controller = new WP_API_JSON_Feed_REST_Controller(
+			new WP_API_JSON_Feed_URLs(),
+			get_post_type_object( 'post' )
+		);
 		$schema = $controller->get_item_schema();
 
 		$this->assertSame( 'post_feed', $schema['title'] );

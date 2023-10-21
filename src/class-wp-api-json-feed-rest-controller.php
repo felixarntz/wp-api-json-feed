@@ -28,16 +28,27 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 	protected $post_type;
 
 	/**
+	 * JSON feed URLs instance.
+	 *
+	 * @since 1.1.0
+	 * @var WP_API_JSON_Feed_URLs
+	 */
+	protected $urls;
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 1.0.0
+	 * @since 1.1.0 The $urls parameter was added.
 	 *
-	 * @param WP_Post_Type $post_type Post type object.
+	 * @param WP_API_JSON_Feed_URLs $urls      JSON feed URLs instance.
+	 * @param WP_Post_Type          $post_type Post type object.
 	 */
-	public function __construct( $post_type ) {
+	public function __construct( WP_API_JSON_Feed_URLs $urls, WP_Post_Type $post_type ) {
+		$this->urls      = $urls;
 		$this->post_type = $post_type;
-		$this->namespace = 'feed/v1';
-		$this->rest_base = ! empty( $this->post_type->json_feed_base ) ? $this->post_type->json_feed_base : $this->post_type->name;
+		$this->namespace = $this->urls->get_url_namespace();
+		$this->rest_base = $this->urls->get_url_base_for_post_type( $this->post_type );
 	}
 
 	/**
@@ -113,14 +124,15 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 
 		// Optional fields.
 		$optional = array(
-			'description' => $this->get_feed_description(),
-			'icon'        => $this->get_feed_icon(),
-			'favicon'     => $this->get_feed_favicon(),
-			'authors'     => $this->get_feed_authors(),
-			'language'    => $this->get_feed_language(),
-			'prev_url'    => $this->get_feed_prev_url( $feed['feed_url'], $query_result ),
-			'next_url'    => $this->get_feed_next_url( $feed['feed_url'], $query_result ),
-			'expired'     => $this->is_feed_expired(),
+			'description'  => $this->get_feed_description(),
+			'user_comment' => $this->get_feed_user_comment(),
+			'icon'         => $this->get_feed_icon(),
+			'favicon'      => $this->get_feed_favicon(),
+			'authors'      => $this->get_feed_authors(),
+			'language'     => $this->get_feed_language(),
+			'prev_url'     => $this->get_feed_prev_url( $feed['feed_url'], $query_result ),
+			'next_url'     => $this->get_feed_next_url( $feed['feed_url'], $query_result ),
+			'expired'      => $this->is_feed_expired(),
 		);
 		foreach ( $optional as $key => $value ) {
 			if ( ! $value ) {
@@ -744,6 +756,21 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 		$feed_description = (string) apply_filters( 'wp_api_json_feed_description', $feed_description, $this->post_type->name );
 
 		return $feed_description;
+	}
+
+	/**
+	 * Returns the feed user comment.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return string Feed user comment.
+	 */
+	protected function get_feed_user_comment() {
+		return sprintf(
+			/* translators: %s: JSON feed URL */
+			__( 'To add this feed to your JSON feed reader, please copy the following URL — %s — and add it your reader.', 'wp-api-json-feed' ),
+			$this->urls->get_feed_url_for_post_type( $this->post_type )
+		);
 	}
 
 	/**

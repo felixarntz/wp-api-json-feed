@@ -26,6 +26,14 @@ class WP_API_JSON_Feed {
 	private static $instance = null;
 
 	/**
+	 * JSON feed URLs instance.
+	 *
+	 * @since 1.1.0
+	 * @var WP_API_JSON_Feed_URLs
+	 */
+	private $urls;
+
+	/**
 	 * Returns the main instance.
 	 *
 	 * @since 1.0.0
@@ -39,6 +47,15 @@ class WP_API_JSON_Feed {
 		}
 
 		return self::$instance;
+	}
+
+	/**
+	 * Constructor.
+	 *
+	 * @since 1.1.0
+	 */
+	public function __construct() {
+		$this->urls = new WP_API_JSON_Feed_URLs();
 	}
 
 	/**
@@ -62,7 +79,7 @@ class WP_API_JSON_Feed {
 		require_once __DIR__ . '/class-wp-api-json-feed-rest-controller.php';
 
 		foreach ( get_post_types( array( 'show_json_feed' => true ), 'objects' ) as $post_type ) {
-			$controller = new WP_API_JSON_Feed_REST_Controller( $post_type );
+			$controller = new WP_API_JSON_Feed_REST_Controller( $this->urls, $post_type );
 			$controller->register_routes();
 		}
 	}
@@ -121,7 +138,7 @@ class WP_API_JSON_Feed {
 		/* translators: %s: post type plural label */
 		$feed_title = sprintf( _x( '%s JSON Feed', 'feed link tag title', 'wp-api-json-feed' ), $post_type_object->labels->name );
 
-		$feed_url = rest_url( sprintf( 'feed/v1/%s', ( ! empty( $post_type_object->json_feed_base ) ? $post_type_object->json_feed_base : $post_type_object->name ) ) );
+		$feed_url = $this->urls->get_feed_url_for_post_type( $post_type_object );
 
 		printf( '<link rel="alternate" type="application/json" title="%1$s" href="%2$s" />', esc_attr( $feed_title ), esc_url( $feed_url ) );
 		echo "\n";
