@@ -14,16 +14,18 @@ License:           GNU General Public License v3 (or later)
 License URI:       https://www.gnu.org/licenses/gpl-3.0.html
 Tags:              json feed, feed, rest api
 
-Implements a JSON feed following the official JSON feed specification by means of a REST API endpoint.
+Implements JSON feeds following the official JSON feed specification by using the WordPress REST API.
 
 == Description ==
 
+Implements JSON feeds following the official JSON feed specification by using the WordPress REST API. By default, only a JSON feed for regular posts is added. This can be easily customized to also provide JSON feeds for e.g. certain custom post types.
+
 * Adds JSON feeds following the official [version 1.1 spec](https://jsonfeed.org/version/1.1).
-* Places a link tag to the posts feed inside the HTML head tag.
-* Adds a new namespace `feed/v1` to the REST API.
-* Allows adding individual endpoints per post type, simply by specifying an additional argument when registering the post type. By default a feed is only added for regular posts (posts of the `post` post type).
-* Uses a proper REST API controller including schema for the endpoints.
-* Contains several filters to modify the feed responses as necessary.
+* Adds a JSON feed for posts to the REST API by default (e.g. at `/wp-json/feed/v1/posts`).
+* Allows adding JSON feeds for other post types by using a `show_json_feed` argument when registering the post type.
+* Places a link tag to the current feed inside the HTML head tag.
+* Maintains backward compatibility with the previous JSON feed [version 1 spec](https://www.jsonfeed.org/version/1/).
+* Contains extensive filters to modify the feed responses as necessary.
 
 == Installation ==
 

@@ -1,6 +1,6 @@
 {
   "name": "felixarntz/wp-api-json-feed",
-  "description": "Implements a JSON feed following the official JSON feed specification by means of a REST API endpoint.",
+  "description": "Implements JSON feeds following the official JSON feed specification by using the WordPress REST API.",
   "license": "GPL-3.0-or-later",
   "type": "wordpress-plugin",
   "keywords": [
