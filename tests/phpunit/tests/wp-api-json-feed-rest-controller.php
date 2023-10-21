@@ -130,14 +130,14 @@ class Tests_WP_API_JSON_Feed_REST_Controller extends WP_Test_REST_TestCase {
 		$response = $controller->prepare_item_for_response( $feed, new WP_REST_Request( 'GET', '/feed/v1/posts' ) );
 		$data = $response->get_data();
 
-		$this->assertSameSets( array(
+		$this->assertSame( array(
 			'version',
 			'title',
 			'home_page_url',
 			'feed_url',
 			'authors',
-			'author', // This field is included by default for backward compatibility.
 			'items',
+			'author', // This field is included by default for backward compatibility.
 		), array_keys( $data ) );
 
 		$this->assertSame( 1, count( $data['items'] ) );
@@ -165,7 +165,7 @@ class Tests_WP_API_JSON_Feed_REST_Controller extends WP_Test_REST_TestCase {
 		$response = $controller->prepare_item_for_response( $feed, new WP_REST_Request( 'GET', '/feed/v1/posts' ) );
 		$data = $response->get_data();
 
-		$this->assertSameSets( array(
+		$this->assertSame( array(
 			'version',
 			'title',
 			'home_page_url',
