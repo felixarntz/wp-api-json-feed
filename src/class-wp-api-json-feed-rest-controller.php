@@ -181,9 +181,19 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 			$data[ $property ] = $feed[ $property ];
 		}
 
-		if ( isset( $data['items'] ) && isset( $feed['items'] ) ) {
-			foreach ( $feed['items'] as $post ) {
-				$data['items'][] = $this->prepare_post_for_feed( $post, $schema['properties']['items']['items'], $request );
+		if ( ! $this->skip_backward_compatibility() ) {
+			if ( isset( $data['authors'] ) ) {
+				$data['author'] = $data['authors'][0];
+			}
+		}
+
+		if ( isset( $data['items'] ) ) {
+			if ( isset( $feed['items'] ) ) {
+				foreach ( $feed['items'] as $post ) {
+					$data['items'][] = $this->prepare_post_for_feed( $post, $schema['properties']['items']['items'], $request );
+				}
+			} else {
+				unset( $data['items'] );
 			}
 		}
 
@@ -571,6 +581,12 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 			}
 		}
 
+		if ( ! $this->skip_backward_compatibility() ) {
+			if ( isset( $post_data['authors'] ) ) {
+				$post_data['author'] = $post_data['authors'][0];
+			}
+		}
+
 		/**
 		 * Filters the prepared post data for the JSON feed of a specific post type.
 		 *
@@ -908,5 +924,28 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 		 * @param string $post_type_slug  Post type slug for the feed.
 		 */
 		return (bool) apply_filters( 'wp_api_json_feed_is_expired', false, $this->post_type->name );
+	}
+
+	/**
+	 * Checks whether backward compatibility fields should be skipped.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return bool True if JSON feed fields for backward compatibility should be skipped, false otherwise.
+	 */
+	protected function skip_backward_compatibility() {
+		/**
+		 * Filters whether to skip fields included for backward compatibility.
+		 *
+		 * For instance, the 'author' field from v1 has been deprecated in v1.1 in favor of 'authors'.
+		 *
+		 * By default, the feeds will still include 'author' as well for backward compatibility. This behavior can be
+		 * skipped by using this filter to return true.
+		 *
+		 * @since 1.1.0
+		 *
+		 * @param bool $skip_bc Whether to skip JSON feed fields included for backward compatibility. Default false.
+		 */
+		return apply_filters( 'wp_api_json_feed_skip_backward_compatibility', false );
 	}
 }

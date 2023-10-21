@@ -110,6 +110,8 @@ class Tests_WP_API_JSON_Feed_REST_Controller extends WP_Test_REST_TestCase {
 	}
 
 	public function test_prepare_item() {
+		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+
 		$controller = new WP_API_JSON_Feed_REST_Controller(
 			new WP_API_JSON_Feed_URLs(),
 			get_post_type_object( 'post' )
@@ -120,6 +122,7 @@ class Tests_WP_API_JSON_Feed_REST_Controller extends WP_Test_REST_TestCase {
 			'title'         => 'My Feed',
 			'home_page_url' => 'https://www.example.com',
 			'feed_url'      => 'https://www.example.com/wp-json/feed/v1/posts',
+			'authors'       => array( get_userdata( $admin_id ) ),
 			'items'         => array( $this->factory->post->create_and_get() ),
 			'invalid'       => true,
 		);
@@ -127,16 +130,48 @@ class Tests_WP_API_JSON_Feed_REST_Controller extends WP_Test_REST_TestCase {
 		$response = $controller->prepare_item_for_response( $feed, new WP_REST_Request( 'GET', '/feed/v1/posts' ) );
 		$data = $response->get_data();
 
-		$this->assertEquals( array(
+		$this->assertSameSets( array(
 			'version',
 			'title',
 			'home_page_url',
 			'feed_url',
+			'authors',
+			'author', // This field is included by default for backward compatibility.
 			'items',
 		), array_keys( $data ) );
 
 		$this->assertSame( 1, count( $data['items'] ) );
 		$this->assertSame( $feed['items'][0]->guid, $data['items'][0]['id'] );
+	}
+
+	public function test_prepare_item_with_backward_compatibility_disabled() {
+		add_filter( 'wp_api_json_feed_skip_backward_compatibility', '__return_true' );
+
+		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+
+		$controller = new WP_API_JSON_Feed_REST_Controller(
+			new WP_API_JSON_Feed_URLs(),
+			get_post_type_object( 'post' )
+		);
+
+		$feed = array(
+			'version'       => 'https://jsonfeed.org/version/1.1',
+			'title'         => 'My Feed',
+			'home_page_url' => 'https://www.example.com',
+			'feed_url'      => 'https://www.example.com/wp-json/feed/v1/posts',
+			'authors'       => array( get_userdata( $admin_id ) ),
+		);
+
+		$response = $controller->prepare_item_for_response( $feed, new WP_REST_Request( 'GET', '/feed/v1/posts' ) );
+		$data = $response->get_data();
+
+		$this->assertSameSets( array(
+			'version',
+			'title',
+			'home_page_url',
+			'feed_url',
+			'authors', // The field 'author' should not be present due to skipping BC fields.
+		), array_keys( $data ) );
 	}
 
 	public function test_get_item_schema() {

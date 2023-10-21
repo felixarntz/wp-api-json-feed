@@ -40,6 +40,10 @@ Once the plugin is activated, it will work out of the box and provide a JSON fee
 
 If you want to provide a JSON feed for your custom post type, you need to specify an additional argument `show_json_feed` when registering the post type, and set it to a boolean `true`. You may also specify a `json_feed_base` argument being a string identifier that should be used in the feed URL. If no string identifier is provided, the post type slug will be used.
 
+= Why does the JSON feed contain fields which are not part of the schema? =
+
+Since the JSON feed schema is always future compatible, by default the plugin preserves backward compatibility with older JSON feed readers by maintaining deprecated fields such as `author`. You can skip this backward compatibility behavior by using the `wp_api_json_feed_skip_backward_compatibility` filter and returning `true`.
+
 = Where should I submit my support request? =
 
 For regular support requests, please use the [wordpress.org support forums](https://wordpress.org/support/plugin/wp-api-json-feed). If you have a technical issue with the plugin where you already have more insight on how to fix it, you can also [open an issue on GitHub instead](https://github.com/felixarntz/wp-api-json-feed/issues).
