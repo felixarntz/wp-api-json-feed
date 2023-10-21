@@ -70,17 +70,42 @@ class Tests_WP_API_JSON_Feed extends WP_UnitTestCase {
 		$this->assertArrayHasKey( '/feed/v1/content', $routes );
 	}
 
-	public function test_render_current_feed_link_tag() {
+	public function test_render_current_feed_link_tags() {
 		$plugin = new WP_API_JSON_Feed();
 
 		ob_start();
-		$plugin->render_current_feed_link_tag();
+		$plugin->render_current_feed_link_tags();
 		$output = ob_get_clean();
 
 		// The expected output should be the same as when calling `render_feed_link_tag()` with parameter 'post'.
 		ob_start();
 		$plugin->render_feed_link_tag( 'post' );
 		$expected = ob_get_clean();
+
+		$this->assertSame( $expected, $output );
+	}
+
+	public function test_render_current_feed_link_tags_with_different_post_type() {
+		$plugin = new WP_API_JSON_Feed();
+
+		// Register a custom post type with JSON feed support and force current post to be of that post type.
+		register_post_type( 'content', array( 'show_json_feed' => true ) );
+		$post            = new WP_Post( new stdClass() );
+		$post->post_type = 'content';
+		$post->filter    = 'raw'; // Prevent the filter method from unsetting the test data.
+		$GLOBALS['post'] = $post;
+
+		ob_start();
+		$plugin->render_current_feed_link_tags();
+		$output = ob_get_clean();
+
+		// The expected output should be the same as when calling `render_feed_link_tag()` with parameters 'post' and 'content'.
+		ob_start();
+		$plugin->render_feed_link_tag( 'post' );
+		$plugin->render_feed_link_tag( 'content' );
+		$expected = ob_get_clean();
+
+		_unregister_post_type( 'content' );
 
 		$this->assertSame( $expected, $output );
 	}

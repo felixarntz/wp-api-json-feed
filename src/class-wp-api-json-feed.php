@@ -65,7 +65,7 @@ class WP_API_JSON_Feed {
 	 */
 	public function add_hooks() {
 		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
-		add_action( 'wp_head', array( $this, 'render_current_feed_link_tag' ) );
+		add_action( 'wp_head', array( $this, 'render_current_feed_link_tags' ) );
 
 		add_filter( 'register_post_type_args', array( $this, 'filter_post_type_args' ), 10, 2 );
 	}
@@ -78,19 +78,33 @@ class WP_API_JSON_Feed {
 	public function register_rest_routes() {
 		require_once __DIR__ . '/class-wp-api-json-feed-rest-controller.php';
 
-		foreach ( get_post_types( array( 'show_json_feed' => true ), 'objects' ) as $post_type ) {
+		$post_types = array_filter(
+			get_post_types( array(), 'objects' ),
+			array( $this, 'supports_json_feed' )
+		);
+
+		foreach ( $post_types as $post_type ) {
 			$controller = new WP_API_JSON_Feed_REST_Controller( $this->urls, $post_type );
 			$controller->register_routes();
 		}
 	}
 
 	/**
-	 * Renders a link tag for the current JSON feed to display in the <head>.
+	 * Renders link tags for the current JSON feeds to display in the <head>.
+	 *
+	 * This will always render a link to the posts feed, unless its JSON feed support was disabled.
+	 * Additionally, if the current post type is not 'post', it will render a link to the JSON feed of that post type
+	 * if it is supported.
 	 *
 	 * @since 1.1.0
 	 */
-	public function render_current_feed_link_tag() {
+	public function render_current_feed_link_tags() {
 		$post_type = $this->get_current_post_type();
+
+		// If the current is not of the 'post' post type, still render the posts JSON feed link in addition.
+		if ( 'post' !== $post_type ) {
+			$this->render_feed_link_tag( 'post' );
+		}
 
 		$this->render_feed_link_tag( $post_type );
 	}
@@ -127,11 +141,7 @@ class WP_API_JSON_Feed {
 	 */
 	public function render_feed_link_tag( $post_type = 'post' ) {
 		$post_type_object = get_post_type_object( $post_type );
-		if ( ! $post_type_object ) {
-			return;
-		}
-
-		if ( ! isset( $post_type_object->show_json_feed ) || ! $post_type_object->show_json_feed ) {
+		if ( ! $post_type_object || ! $this->supports_json_feed( $post_type_object ) ) {
 			return;
 		}
 
@@ -163,5 +173,17 @@ class WP_API_JSON_Feed {
 		}
 
 		return $args;
+	}
+
+	/**
+	 * Checks whether the given post type supports showing a JSON feed.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param WP_Post_Type $post_type Post type object.
+	 * @return bool True if the post type supports a JSON feed, false otherwise.
+	 */
+	private function supports_json_feed( WP_Post_Type $post_type ) {
+		return isset( $post_type->show_json_feed ) && $post_type->show_json_feed;
 	}
 }
