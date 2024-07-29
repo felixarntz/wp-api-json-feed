@@ -1,4 +1,5 @@
 [![PHP Unit Testing](https://img.shields.io/github/actions/workflow/status/felixarntz/wp-api-json-feed/php-test.yml?style=for-the-badge&label=PHP%20Unit%20Testing)](https://github.com/felixarntz/wp-api-json-feed/actions/workflows/php-test.yml)
+[![Codecov](https://img.shields.io/codecov/c/github/felixarntz/wp-api-json-feed?style=for-the-badge)](https://app.codecov.io/github/felixarntz/wp-api-json-feed)
 [![Packagist version](https://img.shields.io/packagist/v/felixarntz/wp-api-json-feed?style=for-the-badge)](https://packagist.org/packages/felixarntz/wp-api-json-feed)
 [![Packagist license](https://img.shields.io/packagist/l/felixarntz/wp-api-json-feed?style=for-the-badge)](https://packagist.org/packages/felixarntz/wp-api-json-feed)
 [![WordPress plugin version](https://img.shields.io/wordpress/plugin/v/wp-api-json-feed?style=for-the-badge)](https://wordpress.org/plugins/wp-api-json-feed/)
