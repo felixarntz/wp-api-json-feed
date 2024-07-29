@@ -8,7 +8,7 @@
         "WP_DEBUG": true,
         "WP_DISABLE_FATAL_ERROR_HANDLER": true
       },
-      "phpVersion": "8.0"
+      "phpVersion": "8.2"
     }
   }
 }

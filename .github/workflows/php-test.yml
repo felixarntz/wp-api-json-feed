@@ -46,8 +46,6 @@ jobs:
       fail-fast: true
       matrix:
         php:
-        - '7.0'
-        - '7.1'
         - '7.2'
         - '7.3'
         - '7.4'
@@ -63,6 +61,8 @@ jobs:
             wordpress: '5.4'
           - php: '5.6'
             wordpress: '6.1'
+          - php: '7.0'
+            wordpress: '6.1'
           - php: '8.2'
             wordpress: 'trunk'
             experimental: true
@@ -71,16 +71,18 @@ jobs:
       WP_ENV_CORE: ${{ matrix.wordpress == 'trunk' && 'WordPress/WordPress' || format( 'https://wordpress.org/wordpress-{0}.zip', matrix.wordpress ) }}
     continue-on-error: ${{ matrix.experimental == true }}
     steps:
-      - uses: styfle/cancel-workflow-action@0.11.0
+      - uses: styfle/cancel-workflow-action@0.12.1
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js (.nvmrc)
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
           cache: npm
