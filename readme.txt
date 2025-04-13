@@ -1,18 +1,16 @@
 === WP-API JSON Feed ===
 
-Plugin Name:       WP-API JSON Feed
-Plugin URI:        https://wordpress.org/plugins/wp-api-json-feed/
-Author:            Felix Arntz
-Author URI:        https://felix-arntz.me
-Contributors:      flixos90
-Donate link:       https://felix-arntz.me/wordpress-plugins/
-Requires at least: 5.4
-Tested up to:      6.7
-Requires PHP:      5.6
-Stable tag:        1.1.0
-License:           GPLv3 or later
-License URI:       https://www.gnu.org/licenses/gpl-3.0.html
-Tags:              json feed, feed, rest api
+Plugin Name:  WP-API JSON Feed
+Plugin URI:   https://wordpress.org/plugins/wp-api-json-feed/
+Author:       Felix Arntz
+Author URI:   https://felix-arntz.me
+Contributors: flixos90
+Donate link:  https://felix-arntz.me/wordpress-plugins/
+Tested up to: 6.7
+Stable tag:   1.1.0
+License:      GPLv3 or later
+License URI:  https://www.gnu.org/licenses/gpl-3.0.html
+Tags:         json feed, feed, rest api
 
 Implements JSON feeds following the official JSON feed specification by using the WordPress REST API.
 
