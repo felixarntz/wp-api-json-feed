@@ -18,7 +18,7 @@
   "repository": "git+https://github.com/felixarntz/wp-api-json-feed.git",
   "devDependencies": {
     "@wordpress/env": "^10.4.0",
-    "@wordpress/scripts": "^28.4.0"
+    "@wordpress/scripts": "^30.14.0"
   },
   "scripts": {
     "format-php": "wp-env run cli --env-cwd=wp-content/plugins/$(basename $(pwd)) composer format",
