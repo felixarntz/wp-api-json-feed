@@ -591,12 +591,14 @@ class WP_API_JSON_Feed_REST_Controller extends WP_REST_Controller {
 		$post_data = array(
 			'id'    => get_the_guid(),
 			/** This filter is documented in wp-includes/feed.php */
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			'url'   => apply_filters( 'the_permalink_rss', get_permalink() ),
 			'title' => get_the_title_rss(),
 		);
 
 		if ( get_option( 'rss_use_excerpt' ) ) {
 			/** This filter is documented in wp-includes/feed.php */
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			$post_data['content_text'] = apply_filters( 'the_excerpt_rss', get_the_excerpt() );
 		} else {
 			$post_data['content_html'] = get_the_content_feed( 'json' );
