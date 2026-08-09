@@ -11,7 +11,7 @@
  * Description: Implements JSON feeds following the official JSON feed specification by using the WordPress REST API.
  * Version: 1.1.0
  * Requires at least: 5.4
- * Requires PHP: 5.6
+ * Requires PHP: 7.4
  * Author: Felix Arntz
  * Author URI: https://felix-arntz.me
  * License: GPLv3 or later
