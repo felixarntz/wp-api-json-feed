@@ -5,3 +5,5 @@ parameters:
 	paths:
 		- wp-api-json-feed.php
 		- inc/
+	scanFiles:
+		- tools/php/lint/vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
