@@ -58,12 +58,6 @@ jobs:
         include:
           # Oldest supported PHP and WordPress versions.
           - php: '7.4'
-            wordpress: '5.4'
-            multisite: false
-          - php: '7.4'
-            wordpress: '5.4'
-            multisite: true
-          - php: '7.4'
             wordpress: '6.1'
             multisite: false
           - php: '7.4'

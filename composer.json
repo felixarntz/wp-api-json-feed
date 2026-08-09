@@ -28,7 +28,7 @@
     "php": ">=7.4"
   },
   "require-dev": {
-    "wp-phpunit/wp-phpunit": ">=5.9",
+    "wp-phpunit/wp-phpunit": ">=6.1",
     "yoast/phpunit-polyfills": "^1.0"
   },
   "config": {
