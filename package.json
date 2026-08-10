@@ -26,6 +26,7 @@
   },
   "scripts": {
     "format-php": "wp-env run cli --env-cwd=wp-content/plugins/$(basename $(pwd)) composer format",
+    "phpcs": "wp-env run cli --env-cwd=wp-content/plugins/$(basename $(pwd)) composer phpcs",
     "phpstan": "wp-env run cli --env-cwd=wp-content/plugins/$(basename $(pwd)) composer phpstan",
     "lint-php": "wp-env run cli --env-cwd=wp-content/plugins/$(basename $(pwd)) composer lint",
     "pretest-php": "wp-env run tests-cli --env-cwd=wp-content/plugins/$(basename $(pwd)) composer update",
