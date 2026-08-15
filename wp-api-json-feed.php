@@ -9,7 +9,7 @@
  * Plugin Name: WP-API JSON Feed
  * Plugin URI: https://wordpress.org/plugins/wp-api-json-feed/
  * Description: Implements JSON feeds following the official JSON feed specification by using the WordPress REST API.
- * Version: 1.1.0
+ * Version: 1.1.1
  * Requires at least: 6.1
  * Requires PHP: 7.4
  * Author: Felix Arntz
